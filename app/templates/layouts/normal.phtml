@@ -1,0 +1,47 @@
+<?php
+/** @var $this App\TemplateEngine */
+/** @var $content string */
+/** @var \App\Models\UsersRow $user */
+
+$hbPriority = 10;
+$this->headBlock()
+/*
+    ->addBlock('    <link href="'.$this->sitePrefixPath().'/favicon.ico" rel="icon" type="image/x-icon" />' . "\n"
+    . '    <link href="'.$this->sitePrefixPath().'/favicon.ico" rel="shortcut icon" type="image/x-icon" />'."\n", "favicon.ico", $hbPriority++)
+*/
+    ->addBlock('    <link href="'.$this->sitePrefixPath().'/css/style.css" media="all" rel="stylesheet" type="text/css" />' . "\n", "style.css", $hbPriority++)
+    ->addBlock('    <script type="text/javascript" src="'.$this->sitePrefixPath().'/js/jquery-2.1.1.min.js"></script>' . "\n", "jquery.js", $hbPriority++);
+?>
+<!DOCTYPE HTML>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title><?php
+        $titleParts = array();
+        if ($this->headTitle() != "") {
+            $titleParts[] = $this->headTitle();
+        }
+        $titleParts[] = "Пицца E96";
+        echo $this->escape(implode(" — ", $titleParts));
+        ?></title>
+<?php echo $this->headBlock()->getHtml(); ?>
+</head>
+<body>
+
+<?php if (!empty($user)) { ?>
+<div id="sessionBar">
+    <a class='realName'><?php echo $this->escape($user->real_name) ?></a>
+    <a class='email'><?php echo $this->escape($user->email) ?></a>
+    <a class='btn' href='#' onclick="jQuery('#logout_form').submit();">Выйти</a>
+    <div style="display: none;">
+        <form id="logout_form" action="<?php echo $this->escape($this->url("logout")); ?>" method="POST">
+            <input type="submit" value="Logout" />
+        </form>
+    </div>
+</div>
+<?php } ?>
+
+<?php echo $content; ?>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+﻿<?php
+/**
+ * Pizza E96
+ *
+ * @author: Paul Melekhov
+ */
+
+/** @var $this App\TemplateEngine */
+/** @var \App\Models\PizzasRow $pizza */
+/** @var $form \App\Forms\LoginForm */
+
+$title = "Добавление заявки на пиццу «" .$pizza->title . "»";
+$this->headTitle($title);
+
+$errors = array();
+
+/*
+ * Ошибки элементов формы
+ */
+$elementsErrors = $form->getElementsValidateErrors();
+$elementsMessages = array(
+    \App\Forms\Element::ERROR_REQUIRED => "Вы не указали %field%",
+    \App\Validators\RegexpMatch::REGEXP_DOES_NOT_MATCH => "Должно быть число",
+    \App\Validators\Callback::CALLBACK_RETURN_ERROR => "Слышь? Нормально вводи!",
+);
+$fieldTitles = array(
+    "pieces" => "Кол-во кусков",
+);
+foreach ($elementsErrors as $name => &$messages) {
+    foreach ($messages as $message) {
+        if (isset($elementsMessages[$message])) {
+            $errors[] = str_replace("%field%", $fieldTitles[$name], $elementsMessages[$message]);
+        } else {
+            $errors[] = "Error: {$message}";
+        }
+    }
+}
+unset($elementsErrors, $elementsMessages, $fieldTitles);
+?>
+<h1><?php echo $this->escape($title); ?></h1>
+
+<p>Чтобы добавить заявку на пиццу &mdash; просто введите какое кол-во кусков вы хотите.</p>
+
+<form action="" method="post">
+    <label for="pieces">Кол-во кусков:</label>
+    <input id="pieces" type="text" name="pieces" value="<?php echo $this->escape($form->getElement("pieces")->getValue()); ?>" maxlength="2" size="2" /> из 8
+    <input type="submit" name="" value="Хочу!" />
+</form>
+
+<p>Цена пиццы: <?php echo $this->escape($pizza->price); ?> руб. (по <?php echo $this->escape(round($pizza->price / 8)); ?> руб. за кусок)</p>
+
+<p><img src="<?php echo $this->escape($pizza->image_url_large) ?>" alt="Фото" /></p>
+
+<p><?php echo nl2br($this->escape($pizza->description)); ?></p>
+
+<?php if (count($errors) > 0): ?>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            setTimeout(function() {
+                alert('<?php echo addslashes($errors[0]) ?>');
+            }, 500);
+        });
+    </script>
+<?php endif ?>

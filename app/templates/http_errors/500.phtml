@@ -1,0 +1,31 @@
+<?php
+/**
+ * Pizza E96
+ *
+ * @author: Paul Melekhov
+ */
+
+/** @var \App\TemplateEngine $this */
+/** @var $request \App\Http\Request */
+/** @var $exception \App\Http\Exception */
+
+$title = "500 Внутрення ошибка сервера";
+$this->headTitle($title);
+$this->headBlock()
+    ->addBlock('    <link href="'.$this->sitePrefixPath().'/css/http_error.css" media="all" rel="stylesheet" type="text/css" />'."\n", "http_error.css")
+
+?>
+<h1><?php echo $this->escape($title); ?></h1>
+
+<p>Извините, при запросе страницы с адресом <span class="request-uri"><?php echo $this->escape($request->getUrl()->getRelativeUrl()); ?></span> на
+    нашем сервере произошла внутренняя ошибка. Попробуйте повторить попытку позднее,
+    когда мы всё исправим.</p>
+
+<?php if ($exception->getMessage() != ""): ?>
+<blockquote><?php
+    if ($exception->getCode() != 0) {
+        echo "[" . $exception->getCode() . "] ";
+    }
+    echo $this->escape($exception->getMessage());
+    ?></blockquote>
+<?php endif; ?>

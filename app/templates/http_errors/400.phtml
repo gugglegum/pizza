@@ -1,0 +1,29 @@
+<?php
+/**
+ * Pizza E96
+ *
+ * @author: Paul Melekhov
+ */
+
+/** @var \App\TemplateEngine $this */
+/** @var $request \App\Http\Request */
+/** @var $exception \App\Http\Exception */
+
+$title = "400 Неверный запрос";
+$this->headTitle($title);
+$this->headBlock()
+    ->addBlock('    <link href="'.$this->sitePrefixPath().'/css/http_error.css" media="all" rel="stylesheet" type="text/css" />'."\n", "http_error.css")
+
+?>
+<h1><?php echo $this->escape($title); ?></h1>
+
+<p>Сервер не может понять данный запрос по адресу <span class="request-uri"><?php echo $this->escape($request->getUrl()->getRelativeUrl()); ?></span>.</p>
+
+<?php if ($exception->getMessage() != ""): ?>
+<blockquote><?php
+    if ($exception->getCode() != 0) {
+        echo "[" . $exception->getCode() . "] ";
+    }
+    echo $this->escape($exception->getMessage());
+?></blockquote>
+<?php endif; ?>

@@ -1,0 +1,14 @@
+RewriteEngine on
+
+RewriteRule ^favicon\.ico$ images/favicon.ico [L]
+
+RewriteCond %{REQUEST_URI} !^/css/
+RewriteCond %{REQUEST_URI} !^/images/
+RewriteCond %{REQUEST_URI} !^/js/
+RewriteCond %{REQUEST_URI} !^/robots.txt$
+
+RewriteRule .* index.php
+
+# enable PHP error logging
+php_flag  log_errors on
+php_value error_log  C:/dev/pizza/logs/php_errors.log

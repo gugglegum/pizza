@@ -1,0 +1,20 @@
+﻿body { margin: 0; padding: 10px; font: normal 15px 'Times New Roman'; }
+#sessionBar { background-color: #eee; text-align: right; padding: 5px 10px; margin: -10px -10px -10px -10px; border-bottom: 1px solid #ccc; }
+#sessionBar a.email { margin-right: 10px; font-weight: bold; }
+#sessionBar a.realName { margin-right: 10px; }
+
+table.myRequests { border-collapse: collapse; }
+table.myRequests tr.ready { background-color: #cfc; }
+table.myRequests tr.notReady { background-color: #fcc; }
+
+table.commonOrder { border-collapse: collapse; }
+table.commonOrder tr.ready { background-color: #cfc; }
+table.commonOrder tr.notReady { background-color: #fcc; }
+table.commonOrder td.title-and-image { font-size: 150%; }
+
+p.myTotalPrice { font-size: 120%; color: #633; }
+p.myTotalPrice .price { font-weight: bold; }
+
+p.totalOrderPrice { font-size: 120%; }
+p.totalOrderPrice .price { font-weight: bold; }
+

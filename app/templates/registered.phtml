@@ -1,0 +1,30 @@
+<?php
+/**
+ * Pizza E96
+ *
+ * @author: Paul Melekhov
+ */
+
+/** @var \App\TemplateEngine $this */
+
+$title = "Регистрация прошла успешно!";
+$this->headTitle($title);
+
+?>
+<div class='data-item data-item_blue data-item__sucess'>
+    <div class='page-message'>
+        <table class='data-table'>
+        <tbody>
+            <tr>
+                <td class='data-table__td'>
+                    <div class='page-message__header'><?php echo $this->escape($title) ?></div>
+                    <div class='page-message__text'>
+                        <p><a href="<?php echo $this->escape($this->url("login")); ?>">Войти в личный кабинет</a></p>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+</div>

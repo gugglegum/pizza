@@ -1,0 +1,86 @@
+<?php
+/**
+ * Pizza E96
+ *
+ * @author: Paul Melekhov
+ */
+
+/** @var \App\TemplateEngine $this */
+
+$title = "Регистрация на сайте";
+$this->headTitle($title);
+
+/** @var $form \App\Forms\RegisterForm */
+
+$errors = array();
+
+/*
+ * Ошибки элементов формы
+ */
+$elementsErrors = $form->getElementsValidateErrors();
+$elementsMessages = array(
+    \App\Forms\Element::ERROR_REQUIRED => "%field% — обязательное поле",
+    \App\Validators\Email::INVALID_EMAIL => "%field% указан неправильно",
+);
+$fieldTitles = array(
+    "email" => "E-mail",
+	"password" => "Пароль",
+    "realName" => "Настоящее имя",
+);
+foreach ($elementsErrors as $name => &$messages) {
+    foreach ($messages as $message) {
+        if (isset($elementsMessages[$message])) {
+            $errors[] = isset($elementsMessages[$message]) ? str_replace("%field%", $fieldTitles[$name], $elementsMessages[$message]) : $message;
+        }
+    }
+}
+unset($elementsErrors, $elementsMessages, $fieldTitles);
+
+/*
+ * Ошибки формы в целом
+ */
+$formErrors = $form->getFormValidateErrors();
+$formMessages = array(
+    \App\Forms\RegisterForm::ERROR_NO_EMAIL => "Вы должны ввести e-mail",
+    "emailExists" => "Указанный электронный адрес уже зарегистрирован",
+);
+foreach ($formErrors as $message) {
+    $errors[] = isset($formMessages[$message]) ? $formMessages[$message] : $message;
+}
+
+?>
+
+<h1><?php echo $this->escape($title); ?></h1>
+
+<form class='page-message__form' method="POST" action="">
+    <div class='page-message__text'>
+        Адрес электронной почты:
+    </div>
+    <div class='page-message__form-input'>
+        <input placeholder="электронная почта" type='text' name="email" value="<?php echo $this->escape($form->getValue("email"))?>" />
+    </div>
+    <div class='page-message__text'>
+        Пароль:
+    </div>
+    <div class='page-message__form-input'>
+        <input placeholder="пароль" type='password' name="password" value="<?php echo $this->escape($form->getValue("password"))?>" />
+    </div>
+    <div class='page-message__text'>
+        Настоящее имя:
+    </div>
+    <div class='page-message__form-input'>
+        <input placeholder="настоящее имя" type='text' name="realName" value="<?php echo $this->escape($form->getValue("realName"))?>" />
+    </div>
+    <div class='page-message__form-submit'>
+        <input type='submit' value='Зарегистрироваться' />
+    </div>
+</form>
+<?php if (count($errors) > 0): ?>
+<script type="text/javascript">
+    $(document).ready(function() {
+        setTimeout(function() {
+            alert('<?php echo addslashes($errors[0]) ?>');
+        }, 500);
+    });
+</script>
+<?php endif ?>
