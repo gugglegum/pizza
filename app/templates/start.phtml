@@ -9,14 +9,23 @@
 /** @var \App\Models\RequestsRowset $myRequests */
 /** @var array $orderPizzas */
 /** @var \App\Models\OrdersRow $activeOrder */
+/** @var int $orderPrice */
 
 $title = "Пицца E96";
+
+$priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice : 0;
 
 ?>
 
 <h1><?php echo $this->escape($title); ?></h1>
 
-<p>Текущий заказ № <?php echo $this->escape($activeOrder->id) ?>, планируемая доставка на <?php echo $this->escape(date("n M Y, H:i", strtotime($activeOrder->delivery))); ?>.</p>
+<p>Текущий заказ № <?php echo $this->escape($activeOrder->id) ?>, планируемая доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($activeOrder->delivery))); ?>.</p>
+
+<?php if ($activeOrder->discount != 0) { ?>
+<p style="color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; width: 20em;">Налетай, подешевело!<br />
+	<span style="font-size: 200%; font-weight: bold;">СКИДКА: <?php echo $this->escape($activeOrder->discount); ?> руб.</span><br />
+	Предоставляется на весь заказ и автоматически учитывается в расчётах!</p>
+<?php } ?>
 
 <h2>Мои заявки</h2>
 <?php if (count($myRequests) > 0) {
@@ -26,7 +35,6 @@ $title = "Пицца E96";
             $readyPizzas[] = $orderPizza["pizza_id"];
         }
     }
-
 	$myTotalPrice = 0;
 	$myTotalReadyPrice = 0;
 ?>
@@ -60,7 +68,11 @@ $title = "Пицца E96";
 
 </table>
 
-<p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape($myTotalReadyPrice); ?> руб.</span> (когда наберётся заказ на целые пиццы, то <span class="price"><?php echo $this->escape($myTotalPrice); ?> руб.</span>)</p>
+<p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier))); ?> руб.</span>
+	<?php /* if (round(max(0, $myTotalReadyPrice * $priceMultiplier)) != round(max(0, $myTotalPrice * $priceMultiplier))) { ?>
+	(когда наберётся заказ на все целые пиццы, то будет <span class="price"><?php echo $this->escape(round(max(0, $myTotalPrice * $priceMultiplier))); ?> руб.</span>)
+	<?php }*/ ?>
+</p>
 <?php } else { ?>
 <p>У вас пока нет ни одной заявки на пиццу. <a href="<?php echo $this->escape($this->url("selectPizza")); ?>">Создать одну</a></p>
 <?php } ?>
@@ -68,16 +80,11 @@ $title = "Пицца E96";
 
 <h2>Общий заказ</h2>
 <?php if (!empty($orderPizzas)) {
-    $orderPrice = 0;
-
 	$userPrices = array();
 
 ?>
 <table class="commonOrder">
     <?php foreach ($orderPizzas as $orderPizza) {
-		if ($orderPizza["ready"]) {
-			$orderPrice += $orderPizza["price"] * $orderPizza["total_pieces"] / 8;
-		}
     ?>
         <tr class="<?php echo $orderPizza["ready"] ? "ready" : "notReady" ?>">
             <td class="title-and-image"><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $orderPizza["pizza_id"]))); ?>">Пицца «<?php echo $this->escape($orderPizza["title"]) ?>»<br />
@@ -92,7 +99,7 @@ $title = "Пицца E96";
 								"totalPrice" => 0,
 							);
 						}
-						$userPrices[$request->getUser()->id]["totalPrice"] += (int) ($orderPizza["price"] / 8 * $request->pieces);
+						$userPrices[$request->getUser()->id]["totalPrice"] += ($orderPizza["price"] / 8 * $request->pieces);
 					}
 
 					?>
@@ -114,18 +121,24 @@ $title = "Пицца E96";
 
 </table>
 
-<p class="totalOrderPrice">Общая стоимость заказа: <span class="price"><?php echo $this->escape($orderPrice); ?> руб.</span></p>
+<p class="totalOrderPrice">Общая стоимость заказа: <span class="price"><?php echo $this->escape(round($orderPrice * $priceMultiplier)); ?> руб.</span>
+<?php if (round($orderPrice * $priceMultiplier) != $orderPrice) { ?>(без скидки было бы: <?php echo $this->escape($orderPrice); ?> руб.)<?php } ?>
+</p>
 
 <h2>Кому сколько сдавать?</h2>
 
+<?php if (count($userPrices) != 0) { ?>
 <table>
 	<?php foreach ($userPrices as $userPrice) { ?>
 		<tr>
 			<td><?php echo $this->escape($userPrice["user"]->real_name); ?></td>
-			<td><?php echo $this->escape($userPrice["totalPrice"]); ?> руб.</td>
+			<td><?php echo $this->escape(round($userPrice["totalPrice"] * $priceMultiplier)); ?> руб.</td>
 		</tr>
 	<?php } ?>
 </table>
+<?php } else { ?>
+<p>Пока никому и нисколько.</p>
+<?php } ?>
 
 <?php } else { ?>
 <p>Заказ пока пуст, т.к. пока нет ни одной заявки на пиццу.</p>
