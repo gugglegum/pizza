@@ -7,6 +7,10 @@
 
 namespace App\Forms;
 
+use App\Filters\Trim;
+use App\Validators\Email;
+use App\Validators\RegexpMatch;
+
 class RegisterForm extends AbstractForm
 {
     const ERROR_NO_EMAIL = "noEmail";
@@ -16,21 +20,21 @@ class RegisterForm extends AbstractForm
         // E-mail
         $element = new Element("email");
         $element->setRequired(true)
-            ->addPreFilter(new \App\Filters\Trim())
-            ->addValidator(new \App\Validators\Email(), true);
+            ->addPreFilter(new Trim())
+            ->addValidator(new Email(), true);
         $this->addElement($element);
 
         // Password
         $element = new Element("password");
         $element->setRequired(true)
-            ->addValidator(new \App\Validators\RegexpMatch('/^.{4,}$/'), true);
+            ->addValidator(new RegexpMatch('/^.{4,}$/u'), true, "length", ['minLength' => 4]);
         $this->addElement($element);
 
         // Real name
         $element = new Element("realName");
         $element->setRequired(true)
-            ->addPreFilter(new \App\Filters\Trim())
-            ->addValidator(new \App\Validators\RegexpMatch('/^.{4,}$/'), true);
+            ->addPreFilter(new Trim())
+            ->addValidator(new RegexpMatch('/^.{4,}$/u'), true, "length", ['minLength' => 4]);
         $this->addElement($element);
     }
 

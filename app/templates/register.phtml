@@ -14,27 +14,41 @@ $this->headTitle($title);
 
 $errors = array();
 
+
+$getErrorMessage = function($error, $fieldName)
+{
+    if ($fieldName == "password" && $error["name"] == "length") {
+        $message = isset($error["data"]["minLength"]) ? "Пароль должен быть не менее {$error["data"]["minLength"]} символов" : "Слишком короткий пароль";
+    } elseif ($fieldName == "realName" && $error["name"] == "length") {
+        $message = isset($error["data"]["minLength"]) ? "%field% должно быть не менее {$error["data"]["minLength"]} символов" : "Слишком короткое %field%";
+    } else {
+        $elementsMessages = array(
+            \App\Forms\Element::ERROR_REQUIRED => "%field% — обязательное поле",
+            \App\Validators\Email::INVALID_EMAIL => "%field% указан неправильно",
+            \App\Validators\RegexpMatch::REGEXP_DOES_NOT_MATCH => "%field% не соответствует регулярному выражению",
+        );
+        $message = isset($elementsMessages[$error["code"]])
+            ? $elementsMessages[$error["code"]]
+            : "%field% — ошибка {$error["code"]}";
+    }
+    // Заменяем %field% на имя поля
+    $fieldTitles = array(
+        "email" => "E-mail",
+        "password" => "Пароль",
+        "realName" => "Настоящее имя",
+    );
+    $message = str_replace("%field%", isset($fieldTitles[$fieldName]) ? $fieldTitles[$fieldName] : $fieldName, $message);
+    return $message;
+};
+
 /*
  * Ошибки элементов формы
  */
-$elementsErrors = $form->getElementsValidateErrors();
-$elementsMessages = array(
-    \App\Forms\Element::ERROR_REQUIRED => "%field% — обязательное поле",
-    \App\Validators\Email::INVALID_EMAIL => "%field% указан неправильно",
-);
-$fieldTitles = array(
-    "email" => "E-mail",
-	"password" => "Пароль",
-    "realName" => "Настоящее имя",
-);
-foreach ($elementsErrors as $name => &$messages) {
-    foreach ($messages as $message) {
-        if (isset($elementsMessages[$message])) {
-            $errors[] = isset($elementsMessages[$message]) ? str_replace("%field%", $fieldTitles[$name], $elementsMessages[$message]) : $message;
-        }
+foreach ($form->getElementsValidateErrors() as $fieldName => &$elementErrors) {
+    foreach ($elementErrors as $elementError) {
+        $errors[] = $getErrorMessage($elementError, $fieldName);
     }
 }
-unset($elementsErrors, $elementsMessages, $fieldTitles);
 
 /*
  * Ошибки формы в целом
@@ -75,6 +89,7 @@ foreach ($formErrors as $message) {
         <input type='submit' value='Зарегистрироваться' />
     </div>
 </form>
+<p>Передумал регистрироваться, хочу <a href="<?php echo $this->escape($this->url("login")) ?>">войти</a>.</p>
 <?php if (count($errors) > 0): ?>
 <script type="text/javascript">
     $(document).ready(function() {

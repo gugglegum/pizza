@@ -20,19 +20,16 @@ $errors = array();
 $elementsErrors = $form->getElementsValidateErrors();
 $elementsMessages = array(
     \App\Forms\Element::ERROR_REQUIRED => "Вы не указали %field%",
-    \App\Validators\RegexpMatch::REGEXP_DOES_NOT_MATCH => "Должно быть число",
+    \App\Validators\RegexpMatch::REGEXP_DOES_NOT_MATCH => "%field% не соответствует регулярному выражению",
     \App\Validators\Callback::CALLBACK_RETURN_ERROR => "Слышь? Нормально вводи!",
 );
 $fieldTitles = array(
     "pieces" => "Кол-во кусков",
 );
-foreach ($elementsErrors as $name => &$messages) {
-    foreach ($messages as $message) {
-        if (isset($elementsMessages[$message])) {
-            $errors[] = str_replace("%field%", $fieldTitles[$name], $elementsMessages[$message]);
-        } else {
-            $errors[] = "Error: {$message}";
-        }
+foreach ($elementsErrors as $name => &$elementErrors) {
+    foreach ($elementErrors as $elementError) {
+        $message = isset($elementsMessages[$elementError["code"]]) ? $elementsMessages[$elementError["code"]] : "%field% — ошибка {$elementError["code"]}";
+        $errors[] = str_replace("%field%", isset($fieldTitles[$name]) ? $fieldTitles[$name] : $name, $message);
     }
 }
 unset($elementsErrors, $elementsMessages, $fieldTitles);

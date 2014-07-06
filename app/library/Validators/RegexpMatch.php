@@ -11,8 +11,14 @@ class RegexpMatch extends AbstractValidator
 {
     const REGEXP_DOES_NOT_MATCH = "regexpDoesNotMatch";
 
+    /**
+     * @var string Шаблон регулярного выражения
+     */
     private $_pattern;
 
+    /**
+     * @param string $pattern      Шаблон регулярного выражения
+     */
     public function __construct($pattern)
     {
         $this->_pattern = $pattern;
@@ -27,4 +33,8 @@ class RegexpMatch extends AbstractValidator
         return true;
     }
 
+    public function getPattern()
+    {
+        return $this->_pattern;
+    }
 }

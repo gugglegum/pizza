@@ -7,6 +7,9 @@
 
 namespace App\Forms;
 
+use App\Validators\Callback;
+use App\Validators\RegexpMatch;
+
 class AddPizzaForm extends AbstractForm
 {
     public function __construct()
@@ -15,9 +18,9 @@ class AddPizzaForm extends AbstractForm
 
         $element = new Element("pieces");
         $element
-            ->addValidator(new \App\Validators\RegexpMatch('/^\\d{1,2}$/'), true)
-            ->addValidator(new \App\Validators\Callback(function($value) {
-                return $value > 0 && $value < 100;
+            ->addValidator(new RegexpMatch('/^\d+$/u'), true)
+            ->addValidator(new Callback(function($value) {
+                return (int) $value > 0 && (int) $value < 64;
             }), true)
             ->setRequired(true);
         $this->addElement($element);

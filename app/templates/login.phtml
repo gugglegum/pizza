@@ -22,14 +22,13 @@ $elementsMessages = array(
     \App\Forms\Element::ERROR_REQUIRED => "Вы не указали %field%",
 );
 $fieldTitles = array(
-    "identity" => "номер мобильного телефона или E-mail",
+    "email" => "E-mail",
     "password" => "пароль",
 );
-foreach ($elementsErrors as $name => &$messages) {
-    foreach ($messages as $message) {
-        if (isset($elementsMessages[$message])) {
-            $errors[] = str_replace("%field%", $fieldTitles[$name], $elementsMessages[$message]);
-        }
+foreach ($elementsErrors as $name => &$elementErrors) {
+    foreach ($elementErrors as $elementError) {
+        $message = isset($elementsMessages[$elementError["code"]]) ? $elementsMessages[$elementError["code"]] : "%field% — ошибка {$elementError["code"]}";
+        $errors[] = str_replace("%field%", isset($fieldTitles[$name]) ? $fieldTitles[$name] : $name, $message);
     }
 }
 unset($elementsErrors, $elementsMessages, $fieldTitles);
