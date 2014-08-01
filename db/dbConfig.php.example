@@ -1,0 +1,11 @@
+<?php
+
+$dbConfig = array(
+    'user' => "root",
+    'pass' => "",
+    'dbName' => "pizza",
+    'host' => "localhost",
+    'port' => 3306,
+);
+
+return $dbConfig;
