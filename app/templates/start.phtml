@@ -59,12 +59,12 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
         <td><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $request->getPizza()->id))); ?>">Пицца «<?php echo $this->escape($request->getPizza()->title) ?>»</a><br />
             Кусков: <?php echo $this->escape($request->pieces); ?><br />
             Цена: <?php
-			$myPrice = round($request->getPizza()->price / 8 * $request->pieces);
+			$myPrice = $request->getPizza()->price / 8 * $request->pieces;
 			$myTotalPrice += $myPrice;
             if (in_array($request->getPizza()->id, $readyPizzas)) {
 				$myTotalReadyPrice += $myPrice;
 			}
-            echo $this->escape($myPrice); ?> руб.</td>
+            echo round($this->escape($myPrice), 0); ?> руб.</td>
         <td>
             <a class='btn' href='#' onclick="jQuery('#logout_form_<?php echo $request->id ?>').submit();">Удалить</a>
             <div style="display: none;">
@@ -78,7 +78,7 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 
 </table>
 
-<p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier))); ?> руб.</span>
+<p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
 <?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
 </p>
 <?php } else { ?>
@@ -140,7 +140,7 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 	<?php foreach ($userPrices as $userPrice) { ?>
 		<tr>
 			<td><?php echo $this->escape($userPrice["user"]->real_name); ?></td>
-			<td><?php echo $this->escape(round($userPrice["totalPrice"] * $priceMultiplier)); ?> руб.</td>
+			<td><?php echo $this->escape(round($userPrice["totalPrice"] * $priceMultiplier, 0)); ?> руб.</td>
 		</tr>
 	<?php } ?>
 </table>
