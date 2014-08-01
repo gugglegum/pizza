@@ -49,37 +49,36 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 	$myTotalReadyPrice = 0;
 ?>
 <p><a href="<?php echo $this->escape($this->url("selectPizza")); ?>">Добавить ещё заявку</a></p>
-<table class="myRequests">
+
 <?php foreach ($myRequests as $request) {
     /** @var \App\Models\RequestsRow $request */
     ?>
-    <tr class="<?php echo in_array($request->getPizza()->id, $readyPizzas) ? "ready" : "notReady" ?>">
-        <td class="title-and-image"><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $request->getPizza()->id))); ?>">
-            <img src="<?php echo $this->escape($request->getPizza()->image_url_small); ?>" alt="Фото" /></a></td>
-        <td><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $request->getPizza()->id))); ?>">Пицца «<?php echo $this->escape($request->getPizza()->title) ?>»</a><br />
-            Кусков: <?php echo $this->escape($request->pieces); ?><br />
+    <div class="panel panel-<?=$orderPizza["ready"] ? "success" : "danger" ?>">
+	  <div class="panel-heading">
+	  	<h3 class="panel-title">
+	  		<a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $request->getPizza()->id))); ?>">
+	  			Пицца «<?php echo $this->escape($request->getPizza()->title) ?>»
+	  		</a>
+	  	</h3>
+	  </div>
+	  <div class="panel-body">
+	  	<img src="<?php echo $this->escape($request->getPizza()->image_url_small); ?>" alt="Фото" /><br>
+	  	Кусков: <?php echo $this->escape($request->pieces); ?><br />
             Цена: <?php
 			$myPrice = $request->getPizza()->price / 8 * $request->pieces;
 			$myTotalPrice += $myPrice;
             if (in_array($request->getPizza()->id, $readyPizzas)) {
 				$myTotalReadyPrice += $myPrice;
 			}
-            echo round($this->escape($myPrice), 0); ?> руб.</td>
-        <td>
-            <a class='btn' href='#' onclick="jQuery('#logout_form_<?php echo $request->id ?>').submit();">Удалить</a>
-            <div style="display: none;">
-                <form id="logout_form_<?php echo $request->id ?>" action="<?php echo $this->escape($this->url("deletePizza", array("requestId" => $request->id))); ?>" method="POST">
-                    <input type="submit" value="Delete" />
-                </form>
-            </div>
-        </td>
-    </tr>
+			echo round($this->escape($myPrice), 0); ?> руб.</td>
+            <form id="logout_form_<?php echo $request->id ?>" action="<?php echo $this->escape($this->url("deletePizza", array("requestId" => $request->id))); ?>" method="POST">
+                <button type="submit" class="btn">Удалить</button>
+            </form>
+	  </div>
+	</div>
 <?php } ?>
-
-</table>
-
-<p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
-<?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
+	<p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
+		<?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
 </p>
 <?php } else { ?>
 <p>У вас пока нет ни одной заявки на пиццу. <a href="<?php echo $this->escape($this->url("selectPizza")); ?>">Создать одну</a></p>
@@ -91,14 +90,17 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 	$userPrices = array();
 
 ?>
-<table class="table commonOrder">
-    <?php foreach ($orderPizzas as $orderPizza) {
-    ?>
-        <tr class="<?php echo $orderPizza["ready"] ? "ready" : "notReady" ?>">
-            <td class="title-and-image"><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $orderPizza["pizza_id"]))); ?>">Пицца «<?php echo $this->escape($orderPizza["title"]) ?>»<br />
-                <img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" /></a></td>
-            <td>
-                <table class="table">
+
+    <?php foreach ($orderPizzas as $orderPizza) { ?>
+	    <div class="panel panel-<?=$orderPizza["ready"] ? "success" : "danger" ?>">
+	  <div class="panel-heading">
+	  	<h3 class="panel-title">
+	  		<a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $orderPizza["pizza_id"]))); ?>">Пицца «<?php echo $this->escape($orderPizza["title"]) ?>»</a>
+	  	</h3>
+	  </div>
+	  <div class="panel-body">
+	  	<img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" class="pull-left"/></a>
+	  	<table class="table">
                 <?php foreach ($orderPizza["requests"] as $request) {
 					if ($orderPizza["ready"]) {
 						if (empty($userPrices[$request->getUser()->id])) {
@@ -117,17 +119,13 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
                         <td><?php echo $this->escape($request->pieces) ?> кусков</td>
                     </tr>
                 <?php } ?>
-
-                </table>
-            </td>
-            <td>
-                Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.<br />
+          </table>
+	  	    Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.<br />
                 <?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, лишние " . (8 - $orderPizza["total_pieces"] % 8) . " кусков" ?>
-            </td>
-        </tr>
+	  </div>
+	</div>
     <?php } ?>
 
-</table>
 
 <p class="totalOrderPrice">Общая стоимость заказа: <span class="price"><?php echo $this->escape(round($orderPrice * $priceMultiplier)); ?> руб.</span>
 <?php if (round($orderPrice * $priceMultiplier) != $orderPrice) { ?>(без скидки было бы: <?php echo $this->escape($orderPrice); ?> руб.)<?php } ?>
