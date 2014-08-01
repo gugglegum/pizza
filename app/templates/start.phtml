@@ -13,7 +13,8 @@
 
 $title = "Пицца E96";
 
-$priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice : 0;
+$priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount_percent / 100 - $activeOrder->discount / $orderPrice : 0;
+$hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 0;
 
 ?>
 
@@ -21,9 +22,18 @@ $priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice :
 
 <p>Текущий заказ № <?php echo $this->escape($activeOrder->id) ?>, планируемая доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($activeOrder->delivery))); ?>.</p>
 
-<?php if ($activeOrder->discount != 0) { ?>
-<p style="color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; width: 20em;">Налетай, подешевело!<br />
-	<span style="font-size: 200%; font-weight: bold;">СКИДКА: <?php echo $this->escape($activeOrder->discount); ?> руб.</span><br />
+<?php if ($hasDiscount) { ?>
+<p style="color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; display: inline-block;">Налетай, подешевело!<br />
+	<span style="font-size: 200%; font-weight: bold;">СКИДКА: <?php
+		$discounts = array();
+		if ($activeOrder->discount_percent != 0) {
+			$discounts[] = $activeOrder->discount_percent . "%";
+		}
+		if ($activeOrder->discount != 0) {
+			$discounts[] = $activeOrder->discount . " руб.";
+		}
+		echo $this->escape(implode(" + ", $discounts));
+	?></span><br />
 	Предоставляется на весь заказ и автоматически учитывается в расчётах!</p>
 <?php } ?>
 
@@ -69,9 +79,7 @@ $priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice :
 </table>
 
 <p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier))); ?> руб.</span>
-	<?php /* if (round(max(0, $myTotalReadyPrice * $priceMultiplier)) != round(max(0, $myTotalPrice * $priceMultiplier))) { ?>
-	(когда наберётся заказ на все целые пиццы, то будет <span class="price"><?php echo $this->escape(round(max(0, $myTotalPrice * $priceMultiplier))); ?> руб.</span>)
-	<?php }*/ ?>
+<?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
 </p>
 <?php } else { ?>
 <p>У вас пока нет ни одной заявки на пиццу. <a href="<?php echo $this->escape($this->url("selectPizza")); ?>">Создать одну</a></p>

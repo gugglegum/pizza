@@ -15,6 +15,7 @@ namespace App\Models;
  * @property $created_ts            UNIX-time создания заказа
  * @property $is_active             Признак активного в данный момент заказа
  * @property $discount              Фиксированная скидка на заказ
+ * @property $discount_percent      Процентная скидка на заказ
  */
 class OrdersRow extends AbstractRow
 {
