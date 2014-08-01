@@ -7,6 +7,8 @@
 
 namespace App\Forms;
 
+use App\Filters\Trim;
+
 class LoginForm extends AbstractForm
 {
     const USER_NOT_FOUND = "userNotFound";
@@ -17,7 +19,7 @@ class LoginForm extends AbstractForm
     {
         // Identity
         $element = new Element("email");
-        $element->addPreFilter(new \App\Filters\Trim())
+        $element->addPreFilter(new Trim())
             ->setRequired(true);
         $this->addElement($element);
 

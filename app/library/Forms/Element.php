@@ -168,14 +168,18 @@ class Element
 
     /**
      * @param \App\Validators\AbstractValidator $validator
-     * @param $break
+     * @param bool $break Не проверять остальные валидаторы, если споткнулись на этом
+     * @param string $name Имя валидатора
+     * @param array $data Опциональные данные, которые не передаются в валидатор, но возвращаются вместе с ошибкой и могут быть использованы при выводе информативного сообщения об ошибке
      * @return Element
      */
-    public function addValidator(\App\Validators\AbstractValidator $validator, $break)
+    public function addValidator(\App\Validators\AbstractValidator $validator, $break, $name = null, $data = array())
     {
         $this->_validators[] = array(
             "validator" => $validator,
             "break" => (bool) $break,
+            "name" => $name,
+            "data" => $data,
         );
         return $this;
     }
@@ -193,7 +197,12 @@ class Element
         if ($this->isEmpty()) {
             if ($this->isRequired()) {
                 $valid = false;
-                $this->_validateErrors[] = self::ERROR_REQUIRED;
+                $this->_validateErrors[] = array(
+                    "code" => self::ERROR_REQUIRED,
+                    "name" => null,
+                    "data" => [],
+                    "validator" => null,
+                );
             }
         } else {
             /** @var $validator \App\Validators\AbstractValidator */
@@ -205,7 +214,12 @@ class Element
                     if (! $lastErrorCode = $validator->getLastErrorCode()) {
                         throw new \App\Exception("Validator " . get_class($validator) . " didn't set _lastErrorCode on validation failure");
                     }
-                    $this->_validateErrors[] = $lastErrorCode;
+                    $this->_validateErrors[] = array(
+                        "code" => $lastErrorCode,
+                        "name" => $validatorData["name"],
+                        "data" => $validatorData["data"],
+                        "validator" => $validator,
+                    );
                     if ($break) {
                         break;
                     }
