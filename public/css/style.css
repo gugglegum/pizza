@@ -1,4 +1,4 @@
-﻿body { margin: 0; padding: 10px; font: normal 15px 'Times New Roman'; }
+﻿/*body { margin: 0; padding: 10px; font: normal 15px 'Times New Roman'; }
 #sessionBar { background-color: #eee; text-align: right; padding: 5px 10px; margin: -10px -10px -10px -10px; border-bottom: 1px solid #ccc; }
 #sessionBar a.email { margin-right: 10px; font-weight: bold; }
 #sessionBar a.realName { margin-right: 10px; }
@@ -16,5 +16,54 @@ p.myTotalPrice { font-size: 120%; color: #633; }
 p.myTotalPrice .price { font-weight: bold; }
 
 p.totalOrderPrice { font-size: 120%; }
-p.totalOrderPrice .price { font-weight: bold; }
+p.totalOrderPrice .price { font-weight: bold; }*/
 
+body {
+  padding-top: 70px;
+  padding-bottom: 40px;
+  /*background-color: #eee;*/
+}
+
+.logo {
+	background: url('/images/logo.jpg') center no-repeat;
+	height: 71px;
+	margin-bottom: 20px;
+}
+
+.form-signin {
+  max-width: 280px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.form-signin-register input[name="realName"] {
+  margin-bottom: 10px;
+}

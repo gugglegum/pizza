@@ -16,10 +16,10 @@ $title = "Пицца E96";
 $priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice : 0;
 
 ?>
+<div class="alert alert-warning" role="alert">
+	<p>Текущий заказ № <?php echo $this->escape($activeOrder->id) ?>, планируемая доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($activeOrder->delivery))); ?>.</p>
+</div>
 
-<h1><?php echo $this->escape($title); ?></h1>
-
-<p>Текущий заказ № <?php echo $this->escape($activeOrder->id) ?>, планируемая доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($activeOrder->delivery))); ?>.</p>
 
 <?php if ($activeOrder->discount != 0) { ?>
 <p style="color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; width: 20em;">Налетай, подешевело!<br />
@@ -83,14 +83,14 @@ $priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice :
 	$userPrices = array();
 
 ?>
-<table class="commonOrder">
+<table class="table commonOrder">
     <?php foreach ($orderPizzas as $orderPizza) {
     ?>
         <tr class="<?php echo $orderPizza["ready"] ? "ready" : "notReady" ?>">
             <td class="title-and-image"><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $orderPizza["pizza_id"]))); ?>">Пицца «<?php echo $this->escape($orderPizza["title"]) ?>»<br />
                 <img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" /></a></td>
             <td>
-                <table>
+                <table class="table">
                 <?php foreach ($orderPizza["requests"] as $request) {
 					if ($orderPizza["ready"]) {
 						if (empty($userPrices[$request->getUser()->id])) {
@@ -128,7 +128,7 @@ $priceMultiplier = $orderPrice != 0 ? 1 - $activeOrder->discount / $orderPrice :
 <h2>Кому сколько сдавать?</h2>
 
 <?php if (count($userPrices) != 0) { ?>
-<table>
+<table class="table">
 	<?php foreach ($userPrices as $userPrice) { ?>
 		<tr>
 			<td><?php echo $this->escape($userPrice["user"]->real_name); ?></td>

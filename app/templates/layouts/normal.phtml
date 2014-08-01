@@ -10,7 +10,9 @@ $this->headBlock()
     . '    <link href="'.$this->sitePrefixPath().'/favicon.ico" rel="shortcut icon" type="image/x-icon" />'."\n", "favicon.ico", $hbPriority++)
 */
     ->addBlock('    <link href="'.$this->sitePrefixPath().'/css/style.css" media="all" rel="stylesheet" type="text/css" />' . "\n", "style.css", $hbPriority++)
-    ->addBlock('    <script type="text/javascript" src="'.$this->sitePrefixPath().'/js/jquery-2.1.1.min.js"></script>' . "\n", "jquery.js", $hbPriority++);
+    ->addBlock('    <script type="text/javascript" src="'.$this->sitePrefixPath().'/js/jquery-2.1.1.min.js"></script>' . "\n", "jquery.js", $hbPriority++)
+    ->addBlock('    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="all" rel="stylesheet" type="text/css" />' . "\n", "bootstrap.min.css", $hbPriority++)
+    ->addBlock('    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>' . "\n", "bootstrap.min.js", $hbPriority++);
 ?>
 <!DOCTYPE HTML>
 <html lang="ru">
@@ -29,19 +31,31 @@ $this->headBlock()
 <body>
 
 <?php if (!empty($user)) { ?>
-<div id="sessionBar">
-    <a class='realName'><?php echo $this->escape($user->real_name) ?></a>
-    <a class='email'><?php echo $this->escape($user->email) ?></a>
-    <a class='btn' href='#' onclick="jQuery('#logout_form').submit();">Выйти</a>
-    <div style="display: none;">
-        <form id="logout_form" action="<?php echo $this->escape($this->url("logout")); ?>" method="POST">
-            <input type="submit" value="Logout" />
-        </form>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Пицца E96</a>
     </div>
+    <div class="navbar-collapse collapse">
+        <form class="navbar-form navbar-right" role="form" action="<?php echo $this->escape($this->url("logout")); ?>" method="POST">
+            <button type="submit" class="btn btn-primary">Выйти</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+           <li><a href="#"><?php echo $this->escape($user->real_name) ?> (<?php echo $this->escape($user->email) ?>)</a></li>
+         </ul>
+
+    </div><!--/.navbar-collapse -->
+  </div>
 </div>
 <?php } ?>
-
-<?php echo $content; ?>
-
+<div class="container">
+<?=$content;?>
+</div>
 </body>
 </html>
