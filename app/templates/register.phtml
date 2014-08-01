@@ -44,7 +44,7 @@ $getErrorMessage = function($error, $fieldName)
 /*
  * Ошибки элементов формы
  */
-foreach ($form->getElementsValidateErrors() as $fieldName => &$elementErrors) {
+foreach ($form->getElementsValidateErrors() as $fieldName => $elementErrors) {
     foreach ($elementErrors as $elementError) {
         $errors[] = $getErrorMessage($elementError, $fieldName);
     }
@@ -63,39 +63,23 @@ foreach ($formErrors as $message) {
 }
 
 ?>
+<form class="form-signin form-signin-register" role="form" method="POST">
 
-<h1><?php echo $this->escape($title); ?></h1>
+<div class="logo"></div>
 
-<form class='page-message__form' method="POST" action="">
-    <div class='page-message__text'>
-        Адрес электронной почты:
-    </div>
-    <div class='page-message__form-input'>
-        <input placeholder="электронная почта" type='text' name="email" value="<?php echo $this->escape($form->getValue("email"))?>" />
-    </div>
-    <div class='page-message__text'>
-        Пароль:
-    </div>
-    <div class='page-message__form-input'>
-        <input placeholder="пароль" type='password' name="password" value="<?php echo $this->escape($form->getValue("password"))?>" />
-    </div>
-    <div class='page-message__text'>
-        Настоящее имя:
-    </div>
-    <div class='page-message__form-input'>
-        <input placeholder="настоящее имя" type='text' name="realName" value="<?php echo $this->escape($form->getValue("realName"))?>" />
-    </div>
-    <div class='page-message__form-submit'>
-        <input type='submit' value='Зарегистрироваться' />
-    </div>
-</form>
-<p>Передумал регистрироваться, хочу <a href="<?php echo $this->escape($this->url("login")) ?>">войти</a>.</p>
+<input type="email" class="form-control" name="email" placeholder="Email" value='<?php echo $this->escape($form->getValue("email"))?>' required autofocus>
+<input type="password" class="form-control" name="password" placeholder="Пароль" value='<?php echo $this->escape($form->getValue("password"))?>' required>
+<input type="text" class="form-control" name="realName" placeholder="Настоящее имя" value='<?php echo $this->escape($form->getValue("realName"))?>' required>
+
+<button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+<div class="form-group">
+	<p class="help-block text-center">Передумал, хочу <a href="<?php echo $this->escape($this->url("login")) ?>">войти</a>.</p>
+</div>
 <?php if (count($errors) > 0): ?>
-<script type="text/javascript">
-    $(document).ready(function() {
-        setTimeout(function() {
-            alert('<?php echo addslashes($errors[0]) ?>');
-        }, 500);
-    });
-</script>
+	<div class="alert alert-danger" role="alert">
+	<? foreach ($errors as $error) {?>
+		<p><?=$error?></p>
+	<? } ?>
+	</div>
 <?php endif ?>
+</form>

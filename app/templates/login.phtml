@@ -47,37 +47,19 @@ foreach ($formErrors as $message) {
 }
 
 ?>
-
-<h1>Пицца E96</h1>
-
-<h2><?php echo $this->escape($title); ?></h2>
-
-<form class='page-message__form' action="" method="POST">
-	<div class='page-message__text'>
-		Адрес электронной почты:
+<form class="form-signin" role="form" method="POST">
+	<div class="logo"></div>
+	<input type="email" class="form-control" name="email" placeholder="Email" value='<?php echo $this->escape($form->getValue("email"))?>' required autofocus>
+	<input type="password" class="form-control" name="password" placeholder="Пароль" value='<?php echo $this->escape($form->getValue("password"))?>' required>
+	<button class="btn btn-lg btn-primary btn-block" type="submit">войти</button>
+	<div class="form-group">
+		<p class="help-block text-center">Первый раз здесь? <a href="<?php echo $this->escape($this->url("register")); ?>">Регистрация</a></p>
 	</div>
-	<div class='page-message__form-input'>
-		<input placeholder='электронная почта' type='text' name='email' value='<?php echo $this->escape($form->getValue("email"))?>' />
-	</div>
-	<div class='page-message__text'>
-		Пароль:
-	</div>
-	<div class='page-message__form-input'>
-		<input placeholder='пароль' type='password' name='password' value='<?php echo $this->escape($form->getValue("password"))?>' />
-	</div>
-	<div class='page-message__form-submit'>
-		<input type='submit' value='Войти' />
-	</div>
+	<?php if (count($errors) > 0): ?>
+		<div class="alert alert-danger" role="alert">
+		<? foreach ($errors as $error) {?>
+			<p><?=$error?></p>
+		<? } ?>
+		</div>
+	<?php endif ?>
 </form>
-
-<p>Первый раз здесь? Тогда вам <a href="<?php echo $this->escape($this->url("register")); ?>">сюда</a> (регистрация).</p>
-
-<?php if (count($errors) > 0): ?>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            setTimeout(function() {
-                alert('<?php echo addslashes($errors[0]) ?>');
-            }, 500);
-        });
-    </script>
-<?php endif ?>
