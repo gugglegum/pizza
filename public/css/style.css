@@ -25,7 +25,7 @@ body {
 }
 
 .logo {
-	background: url('/images/logo.jpg') center no-repeat;
+	background: url('../images/logo.jpg') center no-repeat;
 	height: 71px;
 	margin-bottom: 20px;
 }
