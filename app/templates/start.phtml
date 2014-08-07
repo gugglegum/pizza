@@ -121,7 +121,7 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
                 <?php } ?>
           </table>
 	  	    Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.<br />
-                <?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, лишние " . (8 - $orderPizza["total_pieces"] % 8) . " кусков" ?>
+                <?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " кусков" ?>
 	  </div>
 	</div>
     <?php } ?>
