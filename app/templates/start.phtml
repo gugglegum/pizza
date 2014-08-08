@@ -53,7 +53,7 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 <?php foreach ($myRequests as $request) {
     /** @var \App\Models\RequestsRow $request */
     ?>
-    <div class="panel panel-<?=$orderPizza["ready"] ? "success" : "danger" ?>">
+    <div class="panel panel-<?php echo in_array($request->getPizza()->id, $readyPizzas) ? "success" : "danger" ?>">
 	  <div class="panel-heading">
 	  	<h3 class="panel-title">
 	  		<a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $request->getPizza()->id))); ?>">
