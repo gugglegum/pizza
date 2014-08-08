@@ -116,7 +116,7 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 
                     <tr>
                         <td><?php echo $this->escape($request->getUser()->real_name) ?></td>
-                        <td><?php echo $this->escape($request->pieces) ?> кусков</td>
+                        <td><?php echo $this->escape($request->pieces) ?> <?php echo $this->plural($request->pieces, "кусок", "куска", "кусков"); ?></td>
                     </tr>
                 <?php } ?>
           </table>
