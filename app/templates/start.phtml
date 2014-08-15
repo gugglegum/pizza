@@ -99,7 +99,7 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
 	  	</h3>
 	  </div>
 	  <div class="panel-body">
-	  	<img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" class="pull-left"/></a>
+		<a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $orderPizza["pizza_id"]))); ?>"><img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" class="pull-left"/></a>
 	  	<table class="table">
                 <?php foreach ($orderPizza["requests"] as $request) {
 					if ($orderPizza["ready"]) {
