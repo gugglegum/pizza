@@ -28,12 +28,12 @@ php db/update.php
 ```
 Скрипт предложит создать таблицу с миграциями, нужно ответить да, а затем применить все имеющиеся миграции.
 
-5) Скопировать файл app/configs/application.dist.php в /app/configs/application.php и настроить его под своё окружение:
+5) Скопировать файл app/configs/application.dist.php в app/configs/application.php и настроить его под своё окружение:
 ```
 cp app/configs/application.dist.php app/configs/application.php
 nano app/configs/application.php
 ```
-6) Настроить веб-сервер (nginx, apache) таким образом, чтобы корнем www-директории считался подкаталог /public, а все запросы, кроме /css/*, /images/* и /js/* перенаправлялись на /public/index.php
+6) Настроить веб-сервер (nginx, apache) таким образом, чтобы корнем www-директории считался подкаталог /public, а все запросы, кроме /css/\*, /images/\* и /js/\* перенаправлялись на /public/index.php
 .
 
 7) Создать в таблице orders первый заказ:
