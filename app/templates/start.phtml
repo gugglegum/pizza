@@ -120,8 +120,15 @@ $hasDiscount = $activeOrder->discount != 0 || $activeOrder->discount_percent != 
                     </tr>
                 <?php } ?>
           </table>
-	  	    Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.<br />
-                <?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " кусков" ?>
+
+		<form action="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $orderPizza["pizza_id"]))); ?>" method="post">
+			<label for="pieces">Добавить себе кусочек этой пиццы:</label>
+			<input id="pieces" type="text" name="pieces" value="1" maxlength="2" size="2" />
+			<input type="submit" name="" value="Тоже хочу!" />
+		</form>
+
+		  <p>Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.<br />
+                <?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " кусков" ?></p>
 	  </div>
 	</div>
     <?php } ?>
