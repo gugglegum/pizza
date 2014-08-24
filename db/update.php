@@ -141,6 +141,7 @@ class App
             if ($dbLink->connect_error) {
                 throw new Exception($dbLink->connect_error, $dbLink->connect_errno);
             }
+            $this->_query("SET NAMES UTF8");
         }
         return $dbLink;
     }
