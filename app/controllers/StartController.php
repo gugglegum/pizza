@@ -60,21 +60,21 @@ class StartController extends AbstractController
             return $this->_response->setRedirect($this->_helper->url("login"));
         }
 
-		/** @var \App\Models\OrdersTable $ordersTable */
-		$ordersTable = $this->_tm->getTable("Orders");
-		$activeOrder = $ordersTable->fetchActiveOrder();
-		if (! $activeOrder) {
-			throw new Exception("No active order");
-		}
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        $activeOrder = $ordersTable->fetchActiveOrder();
+        if (! $activeOrder) {
+            throw new Exception("No active order");
+        }
 
-		/** @var \App\Models\OrdersTable $ordersTable */
-		$ordersTable = $this->_tm->getTable("Orders");
-		$activeOrder = $ordersTable->fetchActiveOrder();
-		if (! $activeOrder) {
-			throw new Exception("No active order");
-		}
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        $activeOrder = $ordersTable->fetchActiveOrder();
+        if (! $activeOrder) {
+            throw new Exception("No active order");
+        }
 
-		/** @var \App\Models\RequestsTable $requestsTable */
+        /** @var \App\Models\RequestsTable $requestsTable */
         $requestsTable = $this->_tm->getTable("Requests");
         $myRequests = $requestsTable->fetchAll($requestsTable->select()
                 ->where("order_id = ?", $activeOrder->id)
@@ -82,8 +82,8 @@ class StartController extends AbstractController
                 ->order("pieces DESC")
         );
 
-		$orderPrice = 0;
-		$orderPizzas = $requestsTable->getOrderPizzas($activeOrder->id);
+        $orderPrice = 0;
+        $orderPizzas = $requestsTable->getOrderPizzas($activeOrder->id);
         foreach ($orderPizzas as &$orderPizza)
         {
             $orderPizza["requests"] = $requestsTable->fetchAll($requestsTable->select()
@@ -91,16 +91,16 @@ class StartController extends AbstractController
                 ->where("pizza_id = ?", $orderPizza["pizza_id"])
                 ->order("pieces DESC")
             );
-			if ($orderPizza["ready"]) {
-				$orderPrice += $orderPizza["price"] * $orderPizza["total_pieces"] / 8;
-			}
+            if ($orderPizza["ready"]) {
+                $orderPrice += $orderPizza["price"] * $orderPizza["total_pieces"] / 8;
+            }
         }
 
         $content = $this->_tpl->render("start.phtml", array(
             "myRequests" => $myRequests,
             "orderPizzas" => $orderPizzas,
-			"activeOrder" => $activeOrder,
-			"orderPrice" => $orderPrice,
+            "activeOrder" => $activeOrder,
+            "orderPrice" => $orderPrice,
         ));
         $body = $this->_tpl->render("layouts/normal.phtml", array(
             "content" => $content,
