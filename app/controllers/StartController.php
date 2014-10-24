@@ -109,25 +109,25 @@ class StartController extends AbstractController
         return $this->_response->setBody($body);
     }
 
-   public function selectPizzaAction()
-   {
-       if (! $this->_user instanceof \App\Models\UsersRow) {
-           return $this->_response->setRedirect($this->_helper->url("login"));
-       }
+    public function selectPizzaAction()
+    {
+        if (! $this->_user instanceof \App\Models\UsersRow) {
+            return $this->_response->setRedirect($this->_helper->url("login"));
+        }
 
-       /** @var $pizzasTable \App\Models\PizzasTable */
-       $pizzasTable = $this->_tm->getTable("Pizzas");
-       $pizzasRowset = $pizzasTable->fetchAll($pizzasTable->select()->order('price ASC'));
+        /** @var $pizzasTable \App\Models\PizzasTable */
+        $pizzasTable = $this->_tm->getTable("Pizzas");
+        $pizzasRowset = $pizzasTable->fetchAll($pizzasTable->select()->order('price ASC'));
 
-       $content = $this->_tpl->render("select_pizza.phtml", array(
-           'pizzas' => $pizzasRowset,
-       ));
-       $body = $this->_tpl->render("layouts/normal.phtml", array(
-           "content" => $content,
-           "user" => $this->_user,
-       ));
-       return $this->_response->setBody($body);
-   }
+        $content = $this->_tpl->render("select_pizza.phtml", array(
+            'pizzas' => $pizzasRowset,
+        ));
+        $body = $this->_tpl->render("layouts/normal.phtml", array(
+            "content" => $content,
+            "user" => $this->_user,
+        ));
+        return $this->_response->setBody($body);
+    }
 
     public function addPizzaAction()
     {
@@ -140,12 +140,12 @@ class StartController extends AbstractController
             throw new \App\Http\BadRequestException("Parameter 'pizzaId' was not passed to controller");
         }
 
-		/** @var \App\Models\OrdersTable $ordersTable */
-		$ordersTable = $this->_tm->getTable("Orders");
-		$activeOrder = $ordersTable->fetchActiveOrder();
-		if (! $activeOrder) {
-			throw new Exception("No active order");
-		}
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        $activeOrder = $ordersTable->fetchActiveOrder();
+        if (! $activeOrder) {
+            throw new Exception("No active order");
+        }
 
         /** @var $pizzasTable \App\Models\PizzasTable */
         $pizzasTable = $this->_tm->getTable("Pizzas");
