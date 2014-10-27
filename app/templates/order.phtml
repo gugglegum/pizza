@@ -13,8 +13,8 @@
 
 $title = "Заказ №" . $order->id . " &mdash; Пицца E96";
 
-$priceMultiplier = $orderPrice != 0 ? 1 - $order->discount_percent / 100 - $order->discount / $orderPrice : 0;
-$hasDiscount = $order->discount != 0 || $order->discount_percent != 0;
+$priceMultiplier = $orderPrice != 0 ? 1 - $order->discount_percent / 100 - $order->discount_absolute / $orderPrice : 0;
+$hasDiscount = $order->discount_absolute != 0 || $order->discount_percent != 0;
 $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
 
 ?>

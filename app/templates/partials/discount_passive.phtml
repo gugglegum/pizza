@@ -12,8 +12,8 @@
         if ($order->discount_percent != 0) {
             $discounts[] = $order->discount_percent . "%";
         }
-        if ($order->discount != 0) {
-            $discounts[] = $order->discount . " руб.";
+        if ($order->discount_absolute != 0) {
+            $discounts[] = $order->discount_absolute . " руб.";
         }
         echo $this->escape(implode(" + ", $discounts));
     ?>

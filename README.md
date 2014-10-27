@@ -38,6 +38,6 @@ nano app/configs/application.php
 
 7\. Создать в таблице orders первый заказ:
 ```
-INSERT INTO `orders` (`delivery`, `created_ts`, `status`, `discount`, `discount_percent`) VALUES
-('2014-08-15 17:00:00', unix_timestamp(), 0, '1', 0, NULL);
+INSERT INTO `orders` (`delivery`, `created_ts`, `status`, `discount_absolute`, `discount_percent`) VALUES
+('2014-08-15 17:00:00', unix_timestamp(), 0, NULL, NULL);
 ```

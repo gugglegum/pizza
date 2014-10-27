@@ -14,7 +14,7 @@ namespace App\Models;
  * @property $delivery              Дата-время доставки в формате MySQL DATETIME
  * @property $created_ts            UNIX-time создания заказа
  * @property $status                Статус заказа
- * @property $discount              Фиксированная скидка на заказ
+ * @property $discount_absolute     Фиксированная скидка на заказ
  * @property $discount_percent      Процентная скидка на заказ
  */
 class OrdersRow extends AbstractRow
