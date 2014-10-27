@@ -58,7 +58,7 @@ class OrderController extends AbstractController
     public function orderAction()
     {
         if (! $this->_user instanceof \App\Models\UsersRow) {
-            return $this->_response->setRedirect($this->_helper->url("login"));
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
@@ -112,7 +112,7 @@ class OrderController extends AbstractController
     public function selectPizzaAction()
     {
         if (! $this->_user instanceof \App\Models\UsersRow) {
-            return $this->_response->setRedirect($this->_helper->url("login"));
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
@@ -150,7 +150,7 @@ class OrderController extends AbstractController
     public function addPizzaAction()
     {
         if (! $this->_user instanceof \App\Models\UsersRow) {
-            return $this->_response->setRedirect($this->_helper->url("login"));
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
@@ -214,7 +214,7 @@ class OrderController extends AbstractController
     public function deletePizzaAction()
     {
         if (! $this->_user instanceof \App\Models\UsersRow) {
-            return $this->_response->setRedirect($this->_helper->url("login"));
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");

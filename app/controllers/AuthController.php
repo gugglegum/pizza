@@ -89,7 +89,7 @@ class AuthController extends AbstractController
 
                     $_SESSION["user_id"] = $user->id;
 
-                    return $this->_response->setRedirect($this->_helper->url("start"));
+                    return $this->_response->setRedirect($this->getRequest()->hasGetParam('next') ? $this->getRequest()->getGetParam('next') : $this->_helper->url("start"));
                 } while (false);
             } else { // if form is not valid
                 $this->_response->setStatus(400, "Bad Request");
