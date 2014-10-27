@@ -67,3 +67,6 @@ body {
 .form-signin-register input[name="realName"] {
   margin-bottom: 10px;
 }
+
+table.order-per-user-details td.username { vertical-align: middle; }
+table.order-per-user-details td.price { vertical-align: middle; text-align: right; }

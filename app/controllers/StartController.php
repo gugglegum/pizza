@@ -6,6 +6,7 @@
  */
 
 namespace App\Controllers;
+use App\Models\OrdersRow;
 use App\Models\PizzasRow;
 use App\Models\RequestsTable;
 
@@ -67,13 +68,6 @@ class StartController extends AbstractController
             throw new Exception("No active order");
         }
 
-        /** @var \App\Models\OrdersTable $ordersTable */
-        $ordersTable = $this->_tm->getTable("Orders");
-        $activeOrder = $ordersTable->fetchActiveOrder();
-        if (! $activeOrder) {
-            throw new Exception("No active order");
-        }
-
         /** @var \App\Models\RequestsTable $requestsTable */
         $requestsTable = $this->_tm->getTable("Requests");
         $myRequests = $requestsTable->fetchAll($requestsTable->select()
@@ -107,6 +101,52 @@ class StartController extends AbstractController
             "user" => $this->_user,
         ));
         return $this->_response->setBody($body);
+    }
+
+    public function orderAction()
+    {
+        $orderId = $this->getParam("orderId");
+        if (! $orderId) {
+            throw new \App\Http\BadRequestException("Parameter 'orderId' was not passed to controller");
+        }
+
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        /** @var OrdersRow $order */
+        $order = $ordersTable->findRow($orderId);
+        if (! $order) {
+            throw new \HttpException("No such order #{$orderId}");
+        }
+
+        /** @var \App\Models\RequestsTable $requestsTable */
+        $requestsTable = $this->_tm->getTable("Requests");
+
+        $orderPrice = 0;
+        $orderPizzas = $requestsTable->getOrderPizzas($order->id);
+        foreach ($orderPizzas as &$orderPizza)
+        {
+            $orderPizza["requests"] = $requestsTable->fetchAll($requestsTable->select()
+                    ->where("order_id = ?", $order->id)
+                    ->where("pizza_id = ?", $orderPizza["pizza_id"])
+                    ->order("pieces DESC")
+            );
+            if ($orderPizza["ready"]) {
+                $orderPrice += $orderPizza["price"] * $orderPizza["total_pieces"] / 8;
+            }
+        }
+
+        $content = $this->_tpl->render("order.phtml", array(
+            "orderPizzas" => $orderPizzas,
+            "order" => $order,
+            "orderPrice" => $orderPrice,
+        ));
+        $body = $this->_tpl->render("layouts/normal.phtml", array(
+            "content" => $content,
+            "user" => $this->_user,
+        ));
+        return $this->_response->setBody($body);
+
+
     }
 
     public function selectPizzaAction()

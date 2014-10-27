@@ -77,6 +77,17 @@ $siteRoutes = array(
             "requestId" => "#1#",
         ),
     ),
+
+    // Детали заказа
+    "order" => array(
+        "pattern" => "#^/order/(\\d+)$#",
+        "reverse" => "/order/#orderId#",
+        "params" => array(
+            "controller" => "Start",
+            "action" => "order",
+            "orderId" => "#1#",
+        ),
+    ),
 );
 
 $finalRoutes = array(
