@@ -46,35 +46,49 @@ $siteRoutes = array(
         ),
     ),
 
+    // Заказ
+    "order" => array(
+        "pattern" => "#^/order/(\\d+)$#",
+        "reverse" => "/order/#orderId#",
+        "params" => array(
+            "controller" => "Order",
+            "action" => "order",
+            "orderId" => "#1#",
+        ),
+    ),
+
     // Выбор пиццы
     "selectPizza" => array(
-        "pattern" => "#^/select-pizza$#",
-        "reverse" => "/select-pizza",
+        "pattern" => "#^/order/(\\d+)/select-pizza$#",
+        "reverse" => "/order/#orderId#/select-pizza",
         "params" => array(
-            "controller" => "Start",
+            "controller" => "Order",
             "action" => "selectPizza",
+            "orderId" => "#1#",
         ),
     ),
 
     // Добавление заявки на пиццу
     "addPizza" => array(
-        "pattern" => "#^/add-pizza/(\\d+)$#",
-        "reverse" => "/add-pizza/#pizzaId#",
+        "pattern" => "#^/order/(\\d+)/add-pizza/(\\d+)$#",
+        "reverse" => "/order/#orderId#/add-pizza/#pizzaId#",
         "params" => array(
-            "controller" => "Start",
+            "controller" => "Order",
             "action" => "addPizza",
-            "pizzaId" => "#1#",
+            "orderId" => "#1#",
+            "pizzaId" => "#2#",
         ),
     ),
 
     // Добавление заявки на пиццу
     "deletePizza" => array(
-        "pattern" => "#^/delete-pizza/(\\d+)$#",
-        "reverse" => "/delete-pizza/#requestId#",
+        "pattern" => "#^/order/(\\d+)/delete-pizza/(\\d+)$#",
+        "reverse" => "/order/#orderId#/delete-pizza/#requestId#",
         "params" => array(
-            "controller" => "Start",
+            "controller" => "Order",
             "action" => "deletePizza",
-            "requestId" => "#1#",
+            "orderId" => "#1#",
+            "requestId" => "#2#",
         ),
     ),
 );
