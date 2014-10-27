@@ -53,7 +53,7 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
         <?php if (! $isActive && ! $orderPizza["ready"]) {
             continue;
         } ?>
-        <div class="panel panel-<?=$orderPizza["ready"] ? "success" : "danger" ?>">
+        <div class="panel panel-<?php echo $orderPizza["ready"] ? "success" : "danger" ?>">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $orderPizza["pizza_id"]))); ?>">Пицца «<?php echo $this->escape($orderPizza["title"]) ?>»</a>

@@ -57,9 +57,9 @@ foreach ($formErrors as $message) {
 	</div>
 	<?php if (count($errors) > 0): ?>
 		<div class="alert alert-danger" role="alert">
-		<? foreach ($errors as $error) {?>
-			<p><?=$error?></p>
-		<? } ?>
+		<?php foreach ($errors as $error) {?>
+			<p><?php echo $this->escape($error); ?></p>
+		<?php } ?>
 		</div>
 	<?php endif ?>
 </form>

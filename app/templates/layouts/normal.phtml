@@ -47,12 +47,12 @@ $this->headBlock()
            <li><a href="#"><?php echo $this->escape($user->real_name) ?> (<?php echo $this->escape($user->email) ?>)</a></li>
          </ul>
 
-    </div><!--/.navbar-collapse -->
+    </div>
   </div>
 </div>
 <?php } ?>
 <div class="container">
-<?=$content;?>
+<?php echo $content; ?>
 </div>
 </body>
 </html>
