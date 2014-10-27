@@ -18,6 +18,7 @@ namespace App;
  * @method mixed configVar() configVar(\string $varName)     Возвращает значение заданной переменной конфига
  * @method string partial() partial(\string $template, array $params)   Парсит шаблон и возвращает результат
  * @method array hiddenInputs() hiddenInputs(array $formData)       Возвращает массив из <input type="hidden" ... />
+ * @method string plural() plural(\int $number, \string $one, \string $two, \string $five)    Возвращает числительное в нужном склонении
  */
 class TemplateEngine
 {

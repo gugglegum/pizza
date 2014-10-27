@@ -8,6 +8,7 @@
 /** @var $this App\TemplateEngine */
 /** @var \App\Models\PizzasRow $pizza */
 /** @var $form \App\Forms\LoginForm */
+/** @var \App\Models\OrdersRow $order */
 
 $title = "Добавление заявки на пиццу «" .$pizza->title . "»";
 $this->headTitle($title);
@@ -38,11 +39,13 @@ unset($elementsErrors, $elementsMessages, $fieldTitles);
 
 <p>Чтобы добавить заявку на пиццу &mdash; просто введите какое кол-во кусков вы хотите.</p>
 
+<?php if ($order->status == \App\Models\OrdersRow::STATUS_ACTIVE) { ?>
 <form action="" method="post">
     <label for="pieces">Кол-во кусков:</label>
     <input id="pieces" type="text" name="pieces" value="<?php echo $this->escape($form->getElement("pieces")->getValue()); ?>" maxlength="2" size="2" /> из 8
     <input type="submit" name="" value="Хочу!" />
 </form>
+<?php } ?>
 
 <p>Цена пиццы: <?php echo $this->escape($pizza->price); ?> руб. (по <?php echo $this->escape(round($pizza->price / 8)); ?> руб. за кусок)</p>
 

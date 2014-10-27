@@ -70,3 +70,9 @@ body {
 
 table.order-per-user-details td.username { vertical-align: middle; }
 table.order-per-user-details td.price { vertical-align: middle; text-align: right; }
+
+ul.orders-list li.active { color: #000; font-weight: bold; }
+ul.orders-list li.fixed { color: #c99;  }
+ul.orders-list li.ordered { color: #cc9;  }
+ul.orders-list li.delivered { color: #9c9;  }
+ul.orders-list li.cancelled { color: #999; text-decoration: line-through; }

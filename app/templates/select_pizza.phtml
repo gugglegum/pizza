@@ -7,6 +7,7 @@
 
 /** @var $this App\TemplateEngine */
 /** @var \App\Models\PizzasRowset $pizzas */
+/** @var int $orderId */
 
 $title = "Выберите пиццу";
 $this->headTitle($title);
@@ -21,7 +22,7 @@ $this->headTitle($title);
     ?>
 
     <tr>
-        <td class="title-and-image"><a href="<?php echo $this->escape($this->url("addPizza", array("pizzaId" => $pizza->id))); ?>"><?php echo $this->escape($pizza->title); ?><br />
+        <td class="title-and-image"><a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $orderId, "pizzaId" => $pizza->id))); ?>"><?php echo $this->escape($pizza->title); ?><br />
             <img src="<?php echo $this->escape($pizza->image_url_medium) ?>" alt="Фото" /></a></td>
         <td class="description"><?php echo nl2br($this->escape($pizza->description)); ?></td>
         <td class="price"><?php echo $this->escape($pizza->price); ?> руб.</td>

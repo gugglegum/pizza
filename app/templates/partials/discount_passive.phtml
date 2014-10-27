@@ -1,0 +1,20 @@
+<?php
+/**
+ * Шаблон блока скидки, когда формирование заказа уже завершилось
+ */
+
+/** @var \App\Models\OrdersRow $order */
+
+?>
+<p>Скидка:
+    <?php
+        $discounts = array();
+        if ($order->discount_percent != 0) {
+            $discounts[] = $order->discount_percent . "%";
+        }
+        if ($order->discount != 0) {
+            $discounts[] = $order->discount . " руб.";
+        }
+        echo $this->escape(implode(" + ", $discounts));
+    ?>
+</p>

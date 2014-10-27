@@ -1,0 +1,62 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: paul
+ * Date: 27.10.14
+ * Time: 16:40
+ */
+
+/** @var \App\Models\OrdersRow $order */
+/** @var \App\Models\RequestsRowset $myRequests */
+/** @var array $orderPizzas */
+/** @var float $priceMultiplier */
+/** @var bool $hasDiscount */
+
+?>
+<h2>Мои заявки</h2>
+<?php if (count($myRequests) > 0) {
+    $readyPizzas = array();
+    foreach ($orderPizzas as $orderPizza) {
+        if ($orderPizza["ready"]) {
+            $readyPizzas[] = $orderPizza["pizza_id"];
+        }
+    }
+    $myTotalPrice = 0;
+    $myTotalReadyPrice = 0;
+    ?>
+    <p><a href="<?php echo $this->escape($this->url("selectPizza", [ "orderId" => $order->id ])); ?>">Добавить ещё заявку</a></p>
+
+    <?php foreach ($myRequests as $request) {
+        /** @var \App\Models\RequestsRow $request */
+        ?>
+        <div class="panel panel-<?php echo in_array($request->getPizza()->id, $readyPizzas) ? "success" : "danger" ?>">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $request->getPizza()->id))); ?>">
+                        Пицца «<?php echo $this->escape($request->getPizza()->title) ?>»
+                    </a>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <img src="<?php echo $this->escape($request->getPizza()->image_url_small); ?>" alt="Фото" /><br>
+                Кусков: <?php echo $this->escape($request->pieces); ?><br />
+                Цена: <?php
+                $myPrice = $request->getPizza()->price / 8 * $request->pieces;
+                $myTotalPrice += $myPrice;
+                if (in_array($request->getPizza()->id, $readyPizzas)) {
+                    $myTotalReadyPrice += $myPrice;
+                }
+                echo round($this->escape($myPrice), 0);
+                ?> руб.
+                <form id="logout_form_<?php echo $request->id ?>" action="<?php echo $this->escape($this->url("deletePizza", array("orderId" => $order->id, "requestId" => $request->id))); ?>" method="POST">
+                    <button type="submit" class="btn">Удалить</button>
+                </form>
+            </div>
+        </div>
+    <?php } ?>
+    <p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
+        <?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
+    </p>
+<?php } else { ?>
+    <p>У вас пока нет ни одной заявки на пиццу. <a href="<?php echo $this->escape($this->url("selectPizza", [ "orderId" => $order->id ])); ?>">Создать одну</a></p>
+<?php } ?>

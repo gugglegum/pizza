@@ -39,12 +39,4 @@ class OrdersTable extends AbstractTable
      * @var string
      */
     protected $_primary = 'id';
-
-	/**
-	 * @return null|OrdersRow
-	 */
-	public function fetchActiveOrder()
-	{
-		return $this->fetchRow($this->select()->where('is_active = 1'));
-	}
 }
