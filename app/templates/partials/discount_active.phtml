@@ -6,8 +6,9 @@
 /** @var \App\Models\OrdersRow $order */
 
 ?>
-<p style="color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; display: inline-block;">Налетай, подешевело!<br />
-    <span style="font-size: 200%; font-weight: bold;">СКИДКА: <?php
+<div class="discountBanner">
+    <p>Налетай, подешевело!</p>
+    <p class="-title">СКИДКА: <?php
         $discounts = array();
         if ($order->discount_percent != 0) {
             $discounts[] = $order->discount_percent . "%";
@@ -16,5 +17,5 @@
             $discounts[] = $order->discount . " руб.";
         }
         echo $this->escape(implode(" + ", $discounts));
-    ?></span><br />
-Предоставляется на весь заказ и автоматически учитывается в расчётах!</p>
+    ?></p>
+</div>

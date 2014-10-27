@@ -1,17 +1,20 @@
-﻿/*body { margin: 0; padding: 10px; font: normal 15px 'Times New Roman'; }
-#sessionBar { background-color: #eee; text-align: right; padding: 5px 10px; margin: -10px -10px -10px -10px; border-bottom: 1px solid #ccc; }
-#sessionBar a.email { margin-right: 10px; font-weight: bold; }
-#sessionBar a.realName { margin-right: 10px; }
+﻿p { margin: 1em 0; }
 
-table.myRequests { border-collapse: collapse; }
-table.myRequests tr.ready { background-color: #cfc; }
-table.myRequests tr.notReady { background-color: #fcc; }
+.discountBanner { color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; display: inline-block; }
+.discountBanner p { margin: 0; }
+.discountBanner p.-title { font-size: 200%; font-weight: bold; }
 
-table.commonOrder { border-collapse: collapse; }
-table.commonOrder tr.ready { background-color: #cfc; }
-table.commonOrder tr.notReady { background-color: #fcc; }
-table.commonOrder td.title-and-image { font-size: 150%; }
+.myRequest img { float: left; padding: 0 1em 1em 0; }
 
+table.commonOrder { width: auto; }
+table.commonOrder td.realName { padding-right: 3em; min-width: 20em; }
+table.commonOrder td.pieces { white-space: nowrap; }
+
+.commonOrderItem .pizzaInfo { float: left; padding-right: 1em; }
+.commonOrderItem .pizzaInfo img { display: block; border: 1px solid #ccc; }
+.commonOrderItem .pizzaInfo .price { text-align: center; }
+.readyOrNot { font-size: 140%; margin-top: 0; }
+/*
 p.myTotalPrice { font-size: 120%; color: #633; }
 p.myTotalPrice .price { font-weight: bold; }
 
@@ -21,7 +24,6 @@ p.totalOrderPrice .price { font-weight: bold; }*/
 body {
   padding-top: 70px;
   padding-bottom: 40px;
-  /*background-color: #eee;*/
 }
 
 .logo {
@@ -76,3 +78,10 @@ ul.orders-list li.fixed { color: #c99;  }
 ul.orders-list li.ordered { color: #cc9;  }
 ul.orders-list li.delivered { color: #9c9;  }
 ul.orders-list li.cancelled { color: #999; text-decoration: line-through; }
+
+.printButton { text-align: right; }
+
+@media print {
+    body { padding-top: 0; padding-bottom: 0; }
+    .printButton { display: none; }
+}

@@ -20,7 +20,7 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
 ?>
 <h2>Заказ № <?php echo $this->escape($order->id) ?></h2>
 <div class="alert alert-warning" role="alert">
-    <p>Доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?>.</p>
+    Доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?>.
 </div>
 
 <p><strong>Статус: <?php echo $this->escape($order->getCurrentStatusText()); ?></strong></p>
@@ -59,9 +59,17 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
                     <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $orderPizza["pizza_id"]))); ?>">Пицца «<?php echo $this->escape($orderPizza["title"]) ?>»</a>
                 </h3>
             </div>
-            <div class="panel-body">
-                <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $orderPizza["pizza_id"]))); ?>"><img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" class="pull-left"/></a>
-                <table class="table">
+            <div class="panel-body commonOrderItem">
+                <div class="pizzaInfo">
+                    <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $orderPizza["pizza_id"]))); ?>"><img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" /></a>
+                    <p class="price">Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.
+                    </p>
+                </div>
+
+                <?php if ($isActive) { ?>
+                    <p class="readyOrNot"><?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " " . $this->plural((8 - $orderPizza["total_pieces"] % 8), "куска", "кусков", "кусков"); ?></p>
+                <?php } ?>
+                <table class="table commonOrder">
                     <?php foreach ($orderPizza["requests"] as $request) {
                         /** @var \App\Models\RequestsRow $request */
                         if ($orderPizza["ready"]) {
@@ -76,8 +84,8 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
                         ?>
 
                         <tr>
-                            <td><?php echo $this->escape($request->getUser()->real_name) ?></td>
-                            <td><?php echo $this->escape($request->pieces) ?> <?php echo $this->plural($request->pieces, "кусок", "куска", "кусков"); ?></td>
+                            <td class="realName"><?php echo $this->escape($request->getUser()->real_name) ?></td>
+                            <td class="pieces"><?php echo $this->escape($request->pieces) ?> <?php echo $this->plural($request->pieces, "кусок", "куска", "кусков"); ?></td>
                         </tr>
                     <?php } /* foreach ($orderPizza["requests"] ...) */ ?>
                 </table>
@@ -89,11 +97,7 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
                     <input type="submit" name="" value="Тоже хочу!" />
                 </form>
                 <?php } ?>
-                <p>Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.
-                <?php if ($isActive) { ?>
-                    <br /><?php echo $orderPizza["ready"] ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " кусков" ?>
-                <?php } ?>
-                </p>
+
             </div>
         </div>
     <?php } /* foreach ($orderPizzas ...) */ ?>
@@ -132,9 +136,9 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
             } ?>
         </table>
     <?php } ?>
-
-    <p style="text-align: right;"><button onclick="print()">Печать...</button></p>
-
+<?php if (! $isActive) { ?>
+    <p class="printButton"><button onclick="print()">Печать...</button></p>
+<?php } ?>
 <?php } else { ?>
     <p>Заказ пустой.</p>
 <?php } ?>
