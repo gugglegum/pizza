@@ -19,7 +19,26 @@ $hasDiscount = $order->discount_absolute != 0 || $order->discount_percent != 0;
 $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
 
 ?>
-<h2>Заказ № <?php echo $this->escape($order->id) ?></h2>
+<h2>Заказ № <?php echo $this->escape($order->id) ?>
+<?php
+$btnClassByStatus = function($status) {
+    $classes = [
+        \App\Models\OrdersRow::STATUS_ACTIVE => "btn-primary",
+        \App\Models\OrdersRow::STATUS_FIXED  => "btn-warning",
+        \App\Models\OrdersRow::STATUS_ORDERED => "btn-info",
+        \App\Models\OrdersRow::STATUS_DELIVERED => "btn-success",
+        \App\Models\OrdersRow::STATUS_CANCELLED => "btn-danger",
+    ];
+    return !empty($classes[$status]) ? $classes[$status] : "btn-default";
+};
+?>
+<?php if ($canEdit) { ?>
+<span class="btn <?php echo $btnClassByStatus($order->status); ?>" style="margin-left: 2em;" data-toggle="modal" data-target="#changeStatusModal"><?php echo $this->escape($order->getCurrentStatusText()); ?></span>
+<?php } else { ?>
+<span class="btn <?php echo $btnClassByStatus($order->status); ?>" style="margin-left: 2em;" disabled><?php echo $this->escape($order->getCurrentStatusText()); ?></span>
+<?php } ?>
+
+</h2>
 <div class="alert alert-warning" role="alert">
     Доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?>.
 </div>
@@ -30,27 +49,47 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
 
 <?php if ($canEdit) { ?>
 <p style="float: right"><a href="<?php echo $this->escape($this->url("editOrder", [ "orderId" => $order->id ])); ?>">Редактировать заказ</a></p>
-<?php } ?>
+<div class="modal fade" id="changeStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeStatusModalLabel" aria-hidden="true">
+    <form action="<?php echo $this->escape($this->url("statusOrder", [ "orderId" => $order->id ] )); ?>" method="post" class="form-horizontal changeStatus">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="changeStatusModalLabel">Изменить статус</h4>
+            </div>
+            <div class="modal-body">
 
-<?php if ($canEdit) { ?>
-    <form action="<?php echo $this->escape($this->url("statusOrder", [ "orderId" => $order->id ] )); ?>" method="post" style="display: inline">
-    <p><label for="status">Сатус:</label> <select id="status" name="status" style="display: inline">
-<?php
-$statuses = [
-    \App\Models\OrdersRow::STATUS_ACTIVE,
-    \App\Models\OrdersRow::STATUS_FIXED,
-    \App\Models\OrdersRow::STATUS_ORDERED,
-    \App\Models\OrdersRow::STATUS_DELIVERED,
-    \App\Models\OrdersRow::STATUS_CANCELLED,
-];
-foreach ($statuses as $status) { ?>
-    <option value="<?php echo $status; ?>"<?php if ($order->status == $status) { echo ' selected="selected" style="background-color: #ccf"'; } ?>><?php echo \App\Models\OrdersRow::getStatusText($status) ?></option>
-<?php } ?>
-    </select>
-    <input type="submit" name="" value="Применить" />
-    </p></form>
-<?php } else { ?>
-<p><strong>Статус: <?php echo $this->escape($order->getCurrentStatusText()); ?></strong></p>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="radios">Multiple Radios</label>
+                        <div class="col-md-4">
+                            <?php
+                            $statuses = [
+                                \App\Models\OrdersRow::STATUS_ACTIVE,
+                                \App\Models\OrdersRow::STATUS_FIXED,
+                                \App\Models\OrdersRow::STATUS_ORDERED,
+                                \App\Models\OrdersRow::STATUS_DELIVERED,
+                                \App\Models\OrdersRow::STATUS_CANCELLED,
+                            ];
+                            $n = 0;
+                            foreach ($statuses as $status) { ?>
+                                <div class="radio">
+                                    <label for="radios-<?php echo $n; ?>">
+                                        <input type="radio" name="status" id="radios-<?php echo $n; ?>" value="<?php echo $this->escape($status); ?>"<?php if ($order->status == $status) { echo ' checked="checked"'; } ?>>
+                                        <?php echo $this->escape(\App\Models\OrdersRow::getStatusText($status)); ?>
+                                    </label>
+                                </div>
+                            <?php $n++; } ?>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
 <?php } ?>
 
 <?php if ($hasDiscount) { ?>
