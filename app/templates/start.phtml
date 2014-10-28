@@ -6,6 +6,7 @@
  */
 
 /** @var \App\Models\OrdersRowset $activeOrders */
+/** @var \App\Models\OrdersRowset $processingOrders */
 /** @var \App\Models\OrdersRowset $historyOrders */
 
 $title = "Пицца E96";
@@ -25,11 +26,24 @@ $orderClasses = [
     <p>В настоящий момент есть <?php echo count($activeOrders); ?> <?php echo $this->plural(count($activeOrders), " активный заказ", "активных заказа", "активных заказов"); ?>.
         Вы можете присоединиться к <?php if (count($activeOrders) > 1) { ?>ним<?php } else { ?>нему<?php } ?>.</p>
     <ul class="orders-list">
-    <?php foreach ($activeOrders as $order) {
-        /** @var \App\Models\OrdersRow $order */
-        ?>
-        <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?></li>
-    <?php } ?>
+        <?php foreach ($activeOrders as $order) {
+            /** @var \App\Models\OrdersRow $order */
+            ?>
+            <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+        <?php } ?>
+    </ul>
+<?php } else { ?>
+    <p>В настоящий момент нет активных заказов.</p>
+<?php } ?>
+
+<h2>Обрабатываемые заказы</h2>
+<?php if (count($processingOrders) != 0) { ?>
+    <ul class="orders-list">
+        <?php foreach ($processingOrders as $order) {
+            /** @var \App\Models\OrdersRow $order */
+            ?>
+            <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+        <?php } ?>
     </ul>
 <?php } else { ?>
     <p>В настоящий момент нет активных заказов.</p>

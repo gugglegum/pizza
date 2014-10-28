@@ -8,6 +8,7 @@
 namespace App\Controllers;
 use App\Exception;
 use App\Models\OrdersRow;
+use App\Models\OrdersRowset;
 use App\Models\PizzasRow;
 
 /**
@@ -59,21 +60,40 @@ class StartController extends AbstractController
     {
         /** @var \App\Models\OrdersTable $ordersTable */
         $ordersTable = $this->_tm->getTable("Orders");
-        /** @var OrdersRow $order */
+
+        $activeStatuses = [
+            OrdersRow::STATUS_ACTIVE,
+        ];
+
+        $processingStatuses = [
+            OrdersRow::STATUS_FIXED,
+            OrdersRow::STATUS_ORDERED,
+        ];
+
+        /** @var OrdersRowset $activeOrders */
         $activeOrders = $ordersTable->fetchAll(
             $ordersTable->select()
-                ->where("status = ?", OrdersRow::STATUS_ACTIVE)
+                ->where("status IN (?)", $activeStatuses)
                 ->order('id DESC')
         );
+
+        /** @var OrdersRowset $processingOrders */
+        $processingOrders = $ordersTable->fetchAll(
+            $ordersTable->select()
+                ->where("status IN (?)", $processingStatuses)
+                ->order('id DESC')
+        );
+        /** @var OrdersRowset $historyOrders */
         $historyOrders = $ordersTable->fetchAll(
             $ordersTable->select()
-                ->where("status != ?", OrdersRow::STATUS_ACTIVE)
+                ->where("status NOT IN (?)", array_merge($activeStatuses, $processingStatuses))
                 ->where("status != ?", OrdersRow::STATUS_CANCELLED)
                 ->order('id DESC')
         );
 
         $content = $this->_tpl->render("start.phtml", array(
             "activeOrders" => $activeOrders,
+            "processingOrders" => $processingOrders,
             "historyOrders" => $historyOrders,
         ));
         $body = $this->_tpl->render("layouts/normal.phtml", array(
