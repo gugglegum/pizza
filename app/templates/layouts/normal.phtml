@@ -28,30 +28,34 @@ $this->headBlock()
 </head>
 <body>
 
-<?php if (!empty($user)) { ?>
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="<?php echo $this->escape($this->sitePrefixPath() . "/"); ?>">Пицца E96</a>
-    </div>
-    <div class="navbar-collapse collapse">
-        <form class="navbar-form navbar-right" role="form" action="<?php echo $this->escape($this->url("logout")); ?>" method="POST">
-            <button type="submit" class="btn btn-primary">Выйти</button>
-        </form>
-        <ul class="nav navbar-nav navbar-right">
-           <li><a href="#"><?php echo $this->escape($user->real_name) ?> (<?php echo $this->escape($user->email) ?>)</a></li>
-         </ul>
-
-    </div>
-  </div>
-</div>
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="<?php echo $this->escape($this->sitePrefixPath() . "/"); ?>">Пицца E96</a>
+        </div>
+        <div class="navbar-collapse collapse">
+<?php if (!empty($user)) { ?>
+            <form class="navbar-form navbar-right" role="form" action="<?php echo $this->escape($this->url("logout")); ?>" method="POST">
+                <button type="submit" class="btn btn-primary">Выйти</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><?php echo $this->escape($user->real_name) ?> (<?php echo $this->escape($user->email) ?>)</a></li>
+            </ul>
+<?php } else { ?>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="<?php echo $this->escape($this->url("login")); ?>">Войти</a></li>
+            </ul>
 <?php } ?>
+        </div>
+    </div>
+</div>
+
 <div class="container">
 <?php echo $content; ?>
 </div>
