@@ -128,8 +128,7 @@ $btnClassByStatus = function($status) {
             <div class="panel-body commonOrderItem">
                 <div class="pizzaInfo">
                     <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $orderPizza["pizza_id"]))); ?>"><img src="<?php echo $this->escape($orderPizza["image_url_medium"]); ?>" alt="Фото" /></a>
-                    <p class="price">Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.
-                    </p>
+                    <p class="price">Цена: <?php echo $this->escape($orderPizza["price"]); ?> руб.<br />(по <?php echo $this->escape(round($orderPizza["price"] / 8)); ?> руб. за кусок)</p>
                 </div>
 
                 <?php if ($isActive) { ?>
