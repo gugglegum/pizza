@@ -24,7 +24,7 @@ $orderClasses = [
 <h2>Активные заказы</h2>
 <?php if (count($activeOrders) != 0) { ?>
     <p>В настоящий момент есть <?php echo count($activeOrders); ?> <?php echo $this->plural(count($activeOrders), " активный заказ", "активных заказа", "активных заказов"); ?>.
-        Вы можете присоединиться к <?php if (count($activeOrders) > 1) { ?>ним<?php } else { ?>нему<?php } ?>.</p>
+        Вы можете присоединиться к <?php if (count($activeOrders) > 1) { ?>ним<?php } else { ?>нему<?php } ?> или <a href="<?php echo $this->escape($this->url("createOrder")) ?>">создать свой заказ</a>.</p>
     <ul class="orders-list">
         <?php foreach ($activeOrders as $order) {
             /** @var \App\Models\OrdersRow $order */
@@ -33,7 +33,7 @@ $orderClasses = [
         <?php } ?>
     </ul>
 <?php } else { ?>
-    <p>В настоящий момент нет активных заказов.</p>
+    <p>В настоящий момент нет активных заказов. Вы можете <a href="<?php echo $this->escape($this->url("createOrder")) ?>">создать свой заказ</a>.</p>
 <?php } ?>
 
 <h2>Обрабатываемые заказы</h2>

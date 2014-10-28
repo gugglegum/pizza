@@ -10,6 +10,7 @@
 /** @var array $orderPizzas */
 /** @var \App\Models\OrdersRow $order */
 /** @var int $orderPrice */
+/** @var bool $canEdit */
 
 $title = "Заказ №" . $order->id . " &mdash; Пицца E96";
 
@@ -23,7 +24,34 @@ $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
     Доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?>.
 </div>
 
+<?php if ($order->note != "") { ?>
+<blockquote><?php echo $this->escape($order->note); ?></blockquote>
+<?php } ?>
+
+<?php if ($canEdit) { ?>
+<p style="float: right"><a href="<?php echo $this->escape($this->url("editOrder", [ "orderId" => $order->id ])); ?>">Редактировать заказ</a></p>
+<?php } ?>
+
+<?php if ($canEdit) { ?>
+    <form action="<?php echo $this->escape($this->url("statusOrder", [ "orderId" => $order->id ] )); ?>" method="post" style="display: inline">
+    <p><label for="status">Сатус:</label> <select id="status" name="status" style="display: inline">
+<?php
+$statuses = [
+    \App\Models\OrdersRow::STATUS_ACTIVE,
+    \App\Models\OrdersRow::STATUS_FIXED,
+    \App\Models\OrdersRow::STATUS_ORDERED,
+    \App\Models\OrdersRow::STATUS_DELIVERED,
+    \App\Models\OrdersRow::STATUS_CANCELLED,
+];
+foreach ($statuses as $status) { ?>
+    <option value="<?php echo $status; ?>"<?php if ($order->status == $status) { echo ' selected="selected" style="background-color: #ccf"'; } ?>><?php echo \App\Models\OrdersRow::getStatusText($status) ?></option>
+<?php } ?>
+    </select>
+    <input type="submit" name="" value="Применить" />
+    </p></form>
+<?php } else { ?>
 <p><strong>Статус: <?php echo $this->escape($order->getCurrentStatusText()); ?></strong></p>
+<?php } ?>
 
 <?php if ($hasDiscount) { ?>
 <?php if ($isActive) {

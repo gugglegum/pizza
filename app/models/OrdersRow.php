@@ -8,14 +8,16 @@
 namespace App\Models;
 
 /**
- * Пиццы на сайте
+ * Пицца на сайте
  *
  * @property $id int                ID заказа
  * @property $delivery              Дата-время доставки в формате MySQL DATETIME
  * @property $created_ts            UNIX-time создания заказа
  * @property $status                Статус заказа
+ * @property $creator               ID пользователя, создавшего заказ
  * @property $discount_absolute     Фиксированная скидка на заказ
  * @property $discount_percent      Процентная скидка на заказ
+ * @property $note                  Примечание к заказу
  */
 class OrdersRow extends AbstractRow
 {

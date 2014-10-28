@@ -7,8 +7,14 @@
 
 namespace App\Controllers;
 use App\Exception;
+use App\Http\BadRequestException;
+use App\Http\ForbiddenException;
+use App\Http\MethodNotAllowedException;
+use App\Http\NotFoundException;
 use App\Models\OrdersRow;
+use App\Models\OrdersTable;
 use App\Models\PizzasRow;
+use App\Models\UsersRow;
 
 /**
  * Контроллер стартовой страницы
@@ -57,13 +63,13 @@ class OrderController extends AbstractController
 
     public function orderAction()
     {
-        if (! $this->_user instanceof \App\Models\UsersRow) {
+        if (! $this->_user instanceof UsersRow) {
             return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
         if (! $orderId) {
-            throw new \App\Http\BadRequestException("Parameter 'orderId' was not passed to controller");
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
         }
 
         /** @var \App\Models\OrdersTable $ordersTable */
@@ -71,7 +77,7 @@ class OrderController extends AbstractController
         /** @var OrdersRow $order */
         $order = $ordersTable->findRow($orderId);
         if (! $order) {
-            throw new \HttpException("No such order #{$orderId}");
+            throw new NotFoundException("No such order #{$orderId}");
         }
 
         /** @var \App\Models\RequestsTable $requestsTable */
@@ -101,6 +107,7 @@ class OrderController extends AbstractController
             "orderPizzas" => $orderPizzas,
             "order" => $order,
             "orderPrice" => $orderPrice,
+            "canEdit" => $order->creator == $this->_user->id,
         ));
         $body = $this->_tpl->render("layouts/normal.phtml", array(
             "content" => $content,
@@ -111,13 +118,13 @@ class OrderController extends AbstractController
 
     public function selectPizzaAction()
     {
-        if (! $this->_user instanceof \App\Models\UsersRow) {
+        if (! $this->_user instanceof UsersRow) {
             return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
         if (! $orderId) {
-            throw new \App\Http\BadRequestException("Parameter 'orderId' was not passed to controller");
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
         }
 
         /** @var \App\Models\OrdersTable $ordersTable */
@@ -125,7 +132,7 @@ class OrderController extends AbstractController
         /** @var OrdersRow $order */
         $order = $ordersTable->findRow($orderId);
         if (! $order) {
-            throw new \HttpException("No such order #{$orderId}");
+            throw new NotFoundException("No such order #{$orderId}");
         }
 
         if ($order->status != OrdersRow::STATUS_ACTIVE) {
@@ -149,18 +156,18 @@ class OrderController extends AbstractController
 
     public function addPizzaAction()
     {
-        if (! $this->_user instanceof \App\Models\UsersRow) {
+        if (! $this->_user instanceof UsersRow) {
             return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
         if (! $orderId) {
-            throw new \App\Http\BadRequestException("Parameter 'orderId' was not passed to controller");
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
         }
 
         $pizzaId = $this->getParam("pizzaId");
         if (! $pizzaId) {
-            throw new \App\Http\BadRequestException("Parameter 'pizzaId' was not passed to controller");
+            throw new BadRequestException("Parameter 'pizzaId' was not passed to controller");
         }
 
         /** @var \App\Models\OrdersTable $ordersTable */
@@ -213,18 +220,18 @@ class OrderController extends AbstractController
 
     public function deletePizzaAction()
     {
-        if (! $this->_user instanceof \App\Models\UsersRow) {
+        if (! $this->_user instanceof UsersRow) {
             return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
         }
 
         $orderId = $this->getParam("orderId");
         if (! $orderId) {
-            throw new \App\Http\BadRequestException("Parameter 'orderId' was not passed to controller");
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
         }
 
         $requestId = $this->getParam("requestId");
         if (! $requestId) {
-            throw new \App\Http\BadRequestException("Parameter 'requestId' was not passed to controller");
+            throw new BadRequestException("Parameter 'requestId' was not passed to controller");
         }
 
         /** @var \App\Models\OrdersTable $ordersTable */
@@ -232,7 +239,7 @@ class OrderController extends AbstractController
         /** @var OrdersRow $order */
         $order = $ordersTable->findRow($orderId);
         if (! $order) {
-            throw new \HttpException("No such order #{$orderId}");
+            throw new NotFoundException("No such order #{$orderId}");
         }
 
         if ($order->status != OrdersRow::STATUS_ACTIVE) {
@@ -247,7 +254,153 @@ class OrderController extends AbstractController
             ));
             return $this->_response->setRedirect($this->_helper->url("order", [ "orderId" => $order->id ]));
         } else {
-            throw new \App\Http\MethodNotAllowedException("This URL allows only POST requests");
+            throw new MethodNotAllowedException("This URL allows only POST requests");
+        }
+    }
+
+    public function createOrderAction()
+    {
+        if (! $this->_user instanceof UsersRow) {
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
+        }
+
+        $form = new \App\Forms\CreateOrderForm();
+
+        if ($this->getRequest()->isPost()) {
+            $values = $this->getRequest()->getPostParams();
+            $form->setFormValues($values);
+            if ($form->isValid()) {
+                /** @var OrdersTable $ordersTable */
+                $ordersTable = $this->_tm->getTable("Orders");
+
+                $discountAbsolute = $form->getElement("discount_absolute")->getValue();
+                $discountPercent = $form->getElement("discount_percent")->getValue();
+                $note = $form->getElement("note")->getValue();
+
+                /** @var OrdersRow $order */
+                $order = $ordersTable->createRow(array(
+                    "delivery" => $form->getElement("delivery")->getValue(),
+                    "created_ts" => time(),
+                    "status" => OrdersRow::STATUS_ACTIVE,
+                    "creator" => $this->_user->id,
+                    "discount_absolute" => $discountAbsolute != 0 ? $discountAbsolute : null,
+                    "discount_percent" => $discountPercent != 0 ? $discountPercent : null,
+                    "note" => $note != "" ? $note : null,
+                ));
+                $order->save();
+                return $this->_response->setRedirect($this->_helper->url("order", [ "orderId" => $order->id ]));
+            }
+        } else {
+            $form->setFormValues([
+                "delivery" => date('Y-m-d') . " 17:00:00",
+            ]);
+        }
+
+        $content = $this->_tpl->render("create_order.phtml", array(
+            "form" => $form,
+            "order" => null,
+        ));
+        $body = $this->_tpl->render("layouts/normal.phtml", array(
+            "content" => $content,
+            "user" => $this->_user,
+        ));
+        return $this->_response->setBody($body);
+    }
+
+    public function editOrderAction()
+    {
+        if (! $this->_user instanceof UsersRow) {
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
+        }
+
+        $orderId = $this->getParam("orderId");
+        if (! $orderId) {
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
+        }
+
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        /** @var OrdersRow $order */
+        $order = $ordersTable->findRow($orderId);
+        if (! $order) {
+            throw new NotFoundException("No such order #{$orderId}");
+        }
+
+        if ($order->creator != $this->_user->id) {
+            throw new ForbiddenException("Can't edit order which is not owned");
+        }
+
+        $form = new \App\Forms\CreateOrderForm();
+
+        if ($this->getRequest()->isPost()) {
+            $values = $this->getRequest()->getPostParams();
+            $form->setFormValues($values);
+            if ($form->isValid()) {
+                $discountAbsolute = $form->getElement("discount_absolute")->getValue();
+                $discountPercent = $form->getElement("discount_percent")->getValue();
+                $note = $form->getElement("note")->getValue();
+                $order->setFromArray([
+                    "delivery" => $form->getElement("delivery")->getValue(),
+                    "discount_absolute" => $discountAbsolute != 0 ? $discountAbsolute : null,
+                    "discount_percent" => $discountPercent != 0 ? $discountPercent : null,
+                    "note" => $note != "" ? $note : null,
+                ]);
+                $order->save();
+                return $this->_response->setRedirect($this->_helper->url("order", [ "orderId" => $order->id ]));
+            }
+        } else {
+            $form->setFormValues([
+                "delivery" => $order->delivery,
+                "discount_absolute" => $order->discount_absolute,
+                "discount_percent" => $order->discount_percent,
+                "note" => $order->note,
+            ]);
+        }
+
+        $content = $this->_tpl->render("create_order.phtml", array(
+            "form" => $form,
+            "order" => $order,
+        ));
+        $body = $this->_tpl->render("layouts/normal.phtml", array(
+            "content" => $content,
+            "user" => $this->_user,
+        ));
+        return $this->_response->setBody($body);
+    }
+
+    public function changeStatusAction()
+    {
+        if (! $this->_user instanceof UsersRow) {
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
+        }
+
+        $orderId = $this->getParam("orderId");
+        if (! $orderId) {
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
+        }
+
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        /** @var OrdersRow $order */
+        $order = $ordersTable->findRow($orderId);
+        if (! $order) {
+            throw new NotFoundException("No such order #{$orderId}");
+        }
+
+        if ($order->creator != $this->_user->id) {
+            throw new ForbiddenException("Can't edit order which is not owned");
+        }
+
+        if ($this->getRequest()->isPost()) {
+            $status = $this->getRequest()->getPostParam("status");
+            if ($status === null) {
+                throw new BadRequestException("Missing POST parameter 'status'");
+            }
+            $order->status = $status;
+            $order->save();
+            return $this->_response->setRedirect($this->_helper->url("order", [ "orderId" => $order->id ]));
+        } else {
+            throw new MethodNotAllowedException("This URL allows only POST requests");
         }
     }
 }

@@ -57,6 +57,38 @@ $siteRoutes = array(
         ),
     ),
 
+    // Создание заказа
+    "createOrder" => array(
+        "pattern" => "#^/order/create$#",
+        "reverse" => "/order/create",
+        "params" => array(
+            "controller" => "Order",
+            "action" => "createOrder",
+        ),
+    ),
+
+    // Изменение заказа
+    "editOrder" => array(
+        "pattern" => "#^/order/(\\d+)/edit#",
+        "reverse" => "/order/#orderId#/edit",
+        "params" => array(
+            "controller" => "Order",
+            "action" => "editOrder",
+            "orderId" => "#1#",
+        ),
+    ),
+
+    // Изменение статуса заказа
+    "statusOrder" => array(
+        "pattern" => "#^/order/(\\d+)/status#",
+        "reverse" => "/order/#orderId#/status",
+        "params" => array(
+            "controller" => "Order",
+            "action" => "changeStatus",
+            "orderId" => "#1#",
+        ),
+    ),
+
     // Выбор пиццы
     "selectPizza" => array(
         "pattern" => "#^/order/(\\d+)/select-pizza$#",

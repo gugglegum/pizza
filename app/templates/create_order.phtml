@@ -1,0 +1,75 @@
+<?php
+/**
+ * Pizza E96
+ *
+ * @author: Paul Melekhov
+ */
+
+/** @var $this App\TemplateEngine */
+/** @var $form \App\Forms\CreateOrderForm */
+/** @var $order \App\Models\OrdersRow */
+
+$title = "Создание заказа на пиццу";
+$this->headTitle($title);
+
+$errors = array();
+
+?>
+
+<h1><?php echo $this->escape($title); ?></h1>
+
+<?php if (count($errors) > 0): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php foreach ($errors as $error) {?>
+            <p><?php echo $this->escape($error); ?></p>
+        <?php } ?>
+    </div>
+<?php endif ?>
+
+<form action="" method="POST" class="form-horizontal">
+    <!-- delivery -->
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="delivery">Доставка на:</label>
+        <div class="col-md-2">
+            <input id="delivery" name="delivery" type="text" value="<?php echo $this->escape($form->getValue("delivery"))?>" placeholder="" class="form-control input-md" required="" />
+        </div>
+    </div>
+
+    <!-- discount_absolute -->
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="discount_absolute">Скидка в рублях:</label>
+        <div class="col-md-2">
+            <div class="input-group">
+                <input id="discount_absolute" name="discount_absolute" class="form-control" value="<?php echo $this->escape($form->getValue("discount_absolute"))?>" placeholder="" type="text" />
+                <span class="input-group-addon" style="min-width: 4em;">руб.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- discount_percent -->
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="discount_percent">Скидка в процентах:</label>
+        <div class="col-md-2">
+            <div class="input-group">
+                <input id="discount_percent" name="discount_percent" class="form-control" value="<?php echo $this->escape($form->getValue("discount_percent"))?>" placeholder="" type="text" />
+                <span class="input-group-addon" style="min-width: 4em;">%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- note -->
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="note">Примечание к заказу:</label>
+        <div class="col-md-4">
+            <textarea class="form-control" id="note" name="note"><?php echo $this->escape($form->getValue("note"))?></textarea>
+        </div>
+    </div>
+
+    <!-- Button -->
+    <div class="form-group">
+        <label class="col-md-4 control-label" for=""></label>
+        <div class="col-md-4">
+            <button id="" name="" class="btn btn-primary"><?php if ($order) { ?>Сохранить<?php } else { ?>Создать заказ<?php } ?></button>
+        </div>
+    </div>
+</form>
