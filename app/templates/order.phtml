@@ -19,7 +19,7 @@ $hasDiscount = $order->discount_absolute != 0 || $order->discount_percent != 0;
 $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
 
 ?>
-<h2>Заказ № <?php echo $this->escape($order->id) ?>
+<h1>Заказ № <?php echo $this->escape($order->id) ?>
 <?php
 $btnClassByStatus = function($status) {
     $classes = [
@@ -33,13 +33,13 @@ $btnClassByStatus = function($status) {
 };
 ?>
 <?php if ($canEdit) { ?>
-<span class="btn <?php echo $btnClassByStatus($order->status); ?>" style="margin-left: 2em;" data-toggle="modal" data-target="#changeStatusModal"><?php echo $this->escape($order->getCurrentStatusText()); ?></span>
+<span class="btn <?php echo $btnClassByStatus($order->status); ?>" style="margin-left: 2em; margin-top: -5px;" data-toggle="modal" data-target="#changeStatusModal"><?php echo $this->escape($order->getCurrentStatusText()); ?></span>
 <?php } else { ?>
-<span class="btn <?php echo $btnClassByStatus($order->status); ?>" style="margin-left: 2em;" disabled><?php echo $this->escape($order->getCurrentStatusText()); ?></span>
+<span class="btn <?php echo $btnClassByStatus($order->status); ?>" style="margin-left: 2em; margin-top: -5px;" disabled><?php echo $this->escape($order->getCurrentStatusText()); ?></span>
 <?php } ?>
+</h1>
 
-</h2>
-<div class="alert alert-warning" role="alert">
+<div class="bg-info" style="padding: 1em 1em;">
     Доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?>.
 </div>
 
