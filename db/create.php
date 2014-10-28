@@ -13,7 +13,7 @@ $created_uts = time();
 
 $filename = "m" . gmdate("Ymd_His", $created_uts) . "_{$nameEscaped}.sql";
 
-echo $filename;
+echo $filename . "\n";
 
 if (! $fp = fopen(__DIR__ . "/migrations/{$filename}", "w") ) {
     die("Failed to create migration file named {$filename}\n");
