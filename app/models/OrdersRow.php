@@ -6,6 +6,7 @@
  */
 
 namespace App\Models;
+use App\TableManager;
 
 /**
  * Пицца на сайте
@@ -48,5 +49,22 @@ class OrdersRow extends AbstractRow
             default : $text = "Неизвестный статус #{$status->status}";
         }
         return $text;
+    }
+
+    /**
+     * Возвращает пользователя-создателя заказа
+     *
+     * @return UsersRow
+     * @throws Exception
+     */
+    public function getCreator()
+    {
+        /** @var \App\BootstrapAbstract $bootstrap */
+        $bootstrap = $this->_getBootstrap();
+        /** @var TableManager $tm */
+        $tm = $bootstrap->getResource("TableManager");
+        /** @var UsersTable $usersTable */
+        $usersTable = $tm->getTable("Users");
+        return $usersTable->findRow($this->creator);
     }
 }

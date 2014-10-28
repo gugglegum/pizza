@@ -203,9 +203,12 @@ $btnClassByStatus = function($status) {
             } ?>
         </table>
     <?php } ?>
-<?php if (! $isActive) { ?>
-    <p class="printButton"><button onclick="print()">Печать...</button></p>
-<?php } ?>
 <?php } else { ?>
     <p>Заказ пустой.</p>
 <?php } ?>
+
+<div>Организатор этого заказа: <?php echo $this->escape($order->getCreator()->real_name); ?></div>
+<?php if (!empty($orderPizzas) && ! $isActive) { ?>
+    <p class="printButton"><button onclick="print()">Печать...</button></p>
+<?php } ?>
+

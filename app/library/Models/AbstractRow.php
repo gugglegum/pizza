@@ -11,6 +11,13 @@ namespace App\Models;
 
 class AbstractRow extends \Zend_Db_Table_Row_Abstract
 {
+    /**
+     * Возвращает бутстрап
+     *
+     * @return \App\BootstrapAbstract
+     * @throws Exception
+     * @throws \Zend_Db_Table_Row_Exception
+     */
     protected function _getBootstrap()
     {
         /** @var $table \App\Models\AbstractTable */
