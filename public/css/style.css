@@ -11,7 +11,7 @@ table.commonOrder td.realName { padding-right: 3em; min-width: 20em; }
 table.commonOrder td.pieces { white-space: nowrap; }
 
 .commonOrderItem .pizzaInfo { float: left; padding-right: 1em; }
-.commonOrderItem .pizzaInfo img { display: block; border: 1px solid #ccc; }
+.commonOrderItem .pizzaInfo img { display: block; }
 .commonOrderItem .pizzaInfo .price { text-align: center; }
 .readyOrNot { font-size: 140%; margin-top: 0; }
 /*
