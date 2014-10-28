@@ -9,7 +9,7 @@
 /** @var $form \App\Forms\CreateOrderForm */
 /** @var $order \App\Models\OrdersRow */
 
-$title = "Создание заказа на пиццу";
+$title = $order ? "Изменение заказа на пиццу № " . $order->id : "Создание заказа на пиццу";
 $this->headTitle($title);
 
 $errors = array();
@@ -30,7 +30,7 @@ $errors = array();
     <!-- delivery -->
     <div class="form-group">
         <label class="col-md-4 control-label" for="delivery">Доставка на:</label>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <input id="delivery" name="delivery" type="text" value="<?php echo $this->escape($form->getValue("delivery"))?>" placeholder="" class="form-control input-md" required="" />
         </div>
     </div>
@@ -67,9 +67,11 @@ $errors = array();
 
     <!-- Button -->
     <div class="form-group">
-        <label class="col-md-4 control-label" for=""></label>
-        <div class="col-md-4">
-            <button id="" name="" class="btn btn-primary"><?php if ($order) { ?>Сохранить<?php } else { ?>Создать заказ<?php } ?></button>
+        <label class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <button type="submit" name="" class="btn btn-primary"><?php if ($order) { ?>Сохранить<?php } else { ?>Создать заказ<?php } ?></button>
+            <a href="<?php echo $this->escape($order ? $this->url("order", [ "orderId" => $order->id ] ) : $this->url("start")); ?>" class="btn btn-danger">Отмена</a>
         </div>
     </div>
+
 </form>
