@@ -63,10 +63,6 @@ class OrderController extends AbstractController
 
     public function orderAction()
     {
-        if (! $this->_user instanceof UsersRow) {
-            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
-        }
-
         $orderId = $this->getParam("orderId");
         if (! $orderId) {
             throw new BadRequestException("Parameter 'orderId' was not passed to controller");
@@ -82,11 +78,11 @@ class OrderController extends AbstractController
 
         /** @var \App\Models\RequestsTable $requestsTable */
         $requestsTable = $this->_tm->getTable("Requests");
-        $myRequests = $requestsTable->fetchAll($requestsTable->select()
+        $myRequests = $this->_user ? $requestsTable->fetchAll($requestsTable->select()
                 ->where("order_id = ?", $order->id)
                 ->where("user_id = ?", $this->_user->id)
                 ->order("pieces DESC")
-        );
+        ) : null;
 
         $orderPrice = 0;
         $orderPizzas = $requestsTable->getOrderPizzas($order->id);
@@ -107,7 +103,7 @@ class OrderController extends AbstractController
             "orderPizzas" => $orderPizzas,
             "order" => $order,
             "orderPrice" => $orderPrice,
-            "canEdit" => $order->creator == $this->_user->id,
+            "canEdit" => $this->_user && $order->creator == $this->_user->id,
         ));
         $body = $this->_tpl->render("layouts/normal.phtml", array(
             "content" => $content,
