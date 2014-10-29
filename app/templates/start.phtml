@@ -23,41 +23,40 @@ $orderClasses = [
 
 <h2>Активные заказы</h2>
 <?php if (count($activeOrders) != 0) { ?>
-    <p>В настоящий момент есть <?php echo count($activeOrders); ?> <?php echo $this->plural(count($activeOrders), " активный заказ", "активных заказа", "активных заказов"); ?>.
-        Вы можете присоединиться к <?php if (count($activeOrders) > 1) { ?>ним<?php } else { ?>нему<?php } ?> или <a href="<?php echo $this->escape($this->url("createOrder")) ?>">создать свой заказ</a>.</p>
-    <ul class="orders-list">
-        <?php foreach ($activeOrders as $order) {
-            /** @var \App\Models\OrdersRow $order */
-            ?>
-            <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
-        <?php } ?>
-    </ul>
-<?php } else { ?>
-    <p>В настоящий момент нет активных заказов. Вы можете <a href="<?php echo $this->escape($this->url("createOrder")) ?>">создать свой заказ</a>.</p>
-<?php } ?>
-
-<h2>Обрабатываемые заказы</h2>
-<?php if (count($processingOrders) != 0) { ?>
-    <ul class="orders-list">
-        <?php foreach ($processingOrders as $order) {
-            /** @var \App\Models\OrdersRow $order */
-            ?>
-            <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
-        <?php } ?>
-    </ul>
-<?php } else { ?>
-    <p>В настоящий момент нет активных заказов.</p>
-<?php } ?>
-
-<h2>История заказов</h2>
-<?php if (count($historyOrders) != 0) { ?>
-    <ul class="orders-list">
-    <?php foreach ($historyOrders as $order) {
+<p>В настоящий момент есть <?php echo count($activeOrders); ?> <?php echo $this->plural(count($activeOrders), " активный заказ", "активных заказа", "активных заказов"); ?>.
+    Вы можете присоединиться к <?php if (count($activeOrders) > 1) { ?>ним<?php } else { ?>нему<?php } ?> или <a href="<?php echo $this->escape($this->url("createOrder")) ?>">создать свой заказ</a>.</p>
+<ul class="orders-list">
+    <?php foreach ($activeOrders as $order) {
         /** @var \App\Models\OrdersRow $order */
         ?>
         <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
     <?php } ?>
-    </ul>
+</ul>
 <?php } else { ?>
-    <p>В настоящий момент нет заказов в истории.</p>
+<p>В настоящий момент нет активных заказов. Вы можете <a href="<?php echo $this->escape($this->url("createOrder")) ?>">создать свой заказ</a>.</p>
+<?php } ?>
+
+
+<?php if (count($processingOrders) != 0) { ?>
+<h2>Обрабатываемые заказы</h2>
+<ul class="orders-list">
+    <?php foreach ($processingOrders as $order) {
+        /** @var \App\Models\OrdersRow $order */
+        ?>
+        <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+    <?php } ?>
+</ul>
+<?php } ?>
+
+<h2>История заказов</h2>
+<?php if (count($historyOrders) != 0) { ?>
+<ul class="orders-list">
+<?php foreach ($historyOrders as $order) {
+    /** @var \App\Models\OrdersRow $order */
+    ?>
+    <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+<?php } ?>
+</ul>
+<?php } else { ?>
+<p>В настоящий момент нет заказов в истории.</p>
 <?php } ?>
