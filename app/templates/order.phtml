@@ -19,6 +19,10 @@ $hasDiscount = $order->discount_absolute != 0 || $order->discount_percent != 0;
 $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
 
 ?>
+<?php if ($canEdit) { ?>
+<p style="float: right"><a href="<?php echo $this->escape($this->url("editOrder", [ "orderId" => $order->id ])); ?>">Редактировать заказ</a></p>
+<?php } ?>
+
 <h1>Заказ № <?php echo $this->escape($order->id) ?>
 <?php
 $btnClassByStatus = function($status) {
@@ -48,7 +52,6 @@ $btnClassByStatus = function($status) {
 <?php } ?>
 
 <?php if ($canEdit) { ?>
-<p style="float: right"><a href="<?php echo $this->escape($this->url("editOrder", [ "orderId" => $order->id ])); ?>">Редактировать заказ</a></p>
 <div class="modal fade" id="changeStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeStatusModalLabel" aria-hidden="true">
     <form action="<?php echo $this->escape($this->url("statusOrder", [ "orderId" => $order->id ] )); ?>" method="post" class="form-horizontal changeStatus">
         <div class="modal-dialog">
