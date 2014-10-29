@@ -200,6 +200,10 @@ class OrderController extends AbstractController
                 $requestsRow->save();
                 return $this->_response->setRedirect($this->_helper->url("order", [ "orderId" => $order->id ]));
             }
+        } else {
+            $form->setFormValues([
+                "pieces" => 1,
+            ]);
         }
 
         $content = $this->_tpl->render("add_pizza.phtml", array(
