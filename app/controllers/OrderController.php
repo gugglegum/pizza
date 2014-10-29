@@ -14,6 +14,7 @@ use App\Http\NotFoundException;
 use App\Models\OrdersRow;
 use App\Models\OrdersTable;
 use App\Models\PizzasRow;
+use App\Models\RequestsRow;
 use App\Models\UsersRow;
 
 /**
@@ -191,12 +192,24 @@ class OrderController extends AbstractController
             $form->setFormValues($values);
             if ($form->isValid()) {
                 $requestsTable = $this->_tm->getTable("Requests");
-                $requestsRow = $requestsTable->createRow(array(
-                    "order_id" => $order->id,
-                    "user_id" => $this->_user->id,
-                    "pizza_id" => $pizzaId,
-                    "pieces" => $form->getElement("pieces")->getValue(),
-                ));
+
+                /** @var RequestsRow $requestsRow */
+                $requestsRow = $requestsTable->fetchRow($requestsTable->select()
+                    ->where("order_id = ?", $order->id)
+                    ->where("user_id = ?", $this->_user->id)
+                    ->where("pizza_id = ?", $pizzaId)
+                );
+
+                if (! $requestsRow) {
+                    $requestsRow = $requestsTable->createRow(array(
+                        "order_id" => $order->id,
+                        "user_id" => $this->_user->id,
+                        "pizza_id" => $pizzaId,
+                        "pieces" => $form->getElement("pieces")->getValue(),
+                    ));
+                } else {
+                    $requestsRow->pieces += $form->getElement("pieces")->getValue();
+                }
                 $requestsRow->save();
                 return $this->_response->setRedirect($this->_helper->url("order", [ "orderId" => $order->id ]));
             }
