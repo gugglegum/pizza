@@ -11,6 +11,8 @@ use App\Http\BadRequestException;
 use App\Http\ForbiddenException;
 use App\Http\MethodNotAllowedException;
 use App\Http\NotFoundException;
+use App\Models\OrdersMoneyRow;
+use App\Models\OrdersMoneyTable;
 use App\Models\OrdersRow;
 use App\Models\OrdersTable;
 use App\Models\PizzasRow;
@@ -415,5 +417,78 @@ class OrderController extends AbstractController
         } else {
             throw new MethodNotAllowedException("This URL allows only POST requests");
         }
+    }
+
+    /**
+     * [AJAX] Сохранение записи о сдаче денег на пиццу кем-то
+     *
+     * @throws BadRequestException
+     * @throws Exception
+     * @throws ForbiddenException
+     * @throws MethodNotAllowedException
+     * @throws NotFoundException
+     */
+    public function ajaxCollectMoneyAction()
+    {
+        if (! $this->_user instanceof UsersRow) {
+            return $this->_response->setRedirect($this->_helper->url("login") . "?next=" . $this->getRequest()->getRequestUri());
+        }
+
+        $orderId = $this->getParam("orderId");
+        if (! $orderId) {
+            throw new BadRequestException("Parameter 'orderId' was not passed to controller");
+        }
+
+        /** @var \App\Models\OrdersTable $ordersTable */
+        $ordersTable = $this->_tm->getTable("Orders");
+        /** @var OrdersRow $order */
+        $order = $ordersTable->findRow($orderId);
+        if (! $order) {
+            throw new NotFoundException("No such order #{$orderId}");
+        }
+
+        if ($order->creator != $this->_user->id) {
+            throw new ForbiddenException("Can't edit order which is not owned");
+        }
+
+        if ($this->getRequest()->isPost()) {
+            $userId = $this->getRequest()->getPostParam("userId");
+            $amount = $this->getRequest()->getPostParam("amount");
+
+            /** @var OrdersMoneyTable $ordersMoneyTable */
+            $ordersMoneyTable = $this->_tm->getTable("OrdersMoney");
+
+            if ($amount > 0) {
+                $ordersMoney = $ordersMoneyTable->fetchRow(
+                    $ordersMoneyTable->select()
+                        ->where("order_id = ?", $orderId)
+                        ->where("user_id = ?", $userId)
+                );
+
+                if ($ordersMoney instanceof OrdersMoneyRow) {
+                    $ordersMoney->amount = $amount;
+                } else {
+                    $ordersMoney = $ordersMoneyTable->createRow([
+                        "order_id" => $orderId,
+                        "user_id" => $userId,
+                        "amount" => $amount,
+                    ]);
+                }
+                $ordersMoney->save();
+            } else {
+                $ordersMoney = $ordersMoneyTable->fetchRow(
+                    $ordersMoneyTable->select()
+                        ->where("order_id = ?", $orderId)
+                        ->where("user_id = ?", $userId)
+                );
+                if ($ordersMoney instanceof OrdersMoneyRow) {
+                    $ordersMoney->delete();
+                }
+            }
+            return $this->_response;
+        } else {
+            throw new MethodNotAllowedException("This URL allows only POST requests");
+        }
+
     }
 }

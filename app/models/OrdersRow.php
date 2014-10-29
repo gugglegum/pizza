@@ -67,4 +67,27 @@ class OrdersRow extends AbstractRow
         $usersTable = $tm->getTable("Users");
         return $usersTable->findRow($this->creator);
     }
+
+    /**
+     * Возвращает связанные с заказом записи о собранных деньгах
+     *
+     * @return \Zend_Db_Table_Rowset_Abstract
+     * @throws Exception
+     * @throws \App\Exception
+     */
+    public function getCollectedMoney()
+    {
+        /** @var \App\BootstrapAbstract $bootstrap */
+        $bootstrap = $this->_getBootstrap();
+        /** @var TableManager $tm */
+        $tm = $bootstrap->getResource("TableManager");
+        /** @var OrdersMoneyTable $ordersMoneyTable */
+        $ordersMoneyTable = $tm->getTable("OrdersMoney");
+        /** @var OrdersMoneyRowset $ordersMoneyRowset */
+        $ordersMoneyRowset = $ordersMoneyTable->fetchAll(
+            $ordersMoneyTable->select()
+                ->where("order_id = ?", $this->id)
+        );
+        return $ordersMoneyRowset;
+    }
 }

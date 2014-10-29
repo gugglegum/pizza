@@ -123,6 +123,17 @@ $siteRoutes = array(
             "requestId" => "#2#",
         ),
     ),
+
+    // Отмечание сдачи денег на пиццу
+    "collectMoney" => array(
+        "pattern" => "#^/ajax/order/(\\d+)/collect-money$#",
+        "reverse" => "/ajax/order/#orderId#/collect-money",
+        "params" => array(
+            "controller" => "Order",
+            "action" => "ajaxCollectMoney",
+            "orderId" => "#1#",
+        ),
+    ),
 );
 
 $finalRoutes = array(

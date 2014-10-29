@@ -17,7 +17,7 @@ $title = "Заказ №" . $order->id . " &mdash; Пицца E96";
 $priceMultiplier = $orderPrice != 0 ? 1 - $order->discount_percent / 100 - $order->discount_absolute / $orderPrice : 0;
 $hasDiscount = $order->discount_absolute != 0 || $order->discount_percent != 0;
 $isActive = $order->status == \App\Models\OrdersRow::STATUS_ACTIVE;
-
+$orderCreator = $order->getCreator();
 ?>
 <?php if ($canEdit) { ?>
 <p style="float: right"><a href="<?php echo $this->escape($this->url("editOrder", [ "orderId" => $order->id ])); ?>">Редактировать заказ</a></p>
@@ -141,13 +141,14 @@ $btnClassByStatus = function($status) {
                     <?php foreach ($orderPizza["requests"] as $request) {
                         /** @var \App\Models\RequestsRow $request */
                         if ($orderPizza["ready"]) {
-                            if (empty($userPrices[$request->getUser()->id])) {
-                                $userPrices[$request->getUser()->id] = array(
+                            $user = $request->getUser();
+                            if (empty($userPrices[$user->id])) {
+                                $userPrices[$user->id] = array(
                                     "user" => $request->getUser(),
                                     "totalPrice" => 0,
                                 );
                             }
-                            $userPrices[$request->getUser()->id]["totalPrice"] += ($orderPizza["price"] / 8 * $request->pieces);
+                            $userPrices[$user->id]["totalPrice"] += ($orderPizza["price"] / 8 * $request->pieces);
                         }
                         ?>
 
@@ -174,41 +175,86 @@ $btnClassByStatus = function($status) {
         <?php if (round($orderPrice * $priceMultiplier) != $orderPrice) { ?>(без скидки было бы: <?php echo $this->escape($orderPrice); ?> руб.)<?php } ?>
     </p>
 
+    <?php
+        $collectedMoney = [];
+        foreach ($order->getCollectedMoney() as $money) {
+            /** @var \App\Models\OrdersMoneyRow $money */
+            $collectedMoney[$money->user_id] = $money->amount;
+        }
+    ?>
     <?php if (count($userPrices) != 0) { ?>
-        <h3>Кто, что и сколько заказал</h3>
+        <h3>Кто, что, сколько заказал</h3>
+
+        <p>Деньги за пиццу принимает <?php echo $this->escape($orderCreator->real_name); ?></p>
 
         <table class="table order-per-user-details">
             <?php
             $borderTopNone = ' style="border-top: none"';
             foreach ($userPrices as $userPrice) {
+                $user = $userPrice["user"];
+                $userCollectedMoney = isset($collectedMoney[$user->id]) ? $collectedMoney[$user->id] : null;
+                $userTotalPrice = round($userPrice["totalPrice"] * $priceMultiplier, 0);
+                $rowClassAttr = $userCollectedMoney >= $userTotalPrice ? ' class="paid-full"' : ($userCollectedMoney > 0 ? ' class="paid-part"' : '');
             ?>
 
-                <tr>
-                    <td<?php echo $borderTopNone ?> class="username"><?php echo $this->escape($userPrice["user"]->real_name); ?></td>
+                <tr<?php echo $rowClassAttr; ?> data-user-id="<?php echo $user->id ?>" data-collected-money="<?php echo $userCollectedMoney ?>" data-total-price="<?php echo $userTotalPrice; ?>">
+                    <td<?php echo $borderTopNone ?> class="username">
+                        <?php if ($canEdit) { ?><span class="pointer hover-show glyphicon glyphicon-pencil"></span><?php } ?>
+                        <?php echo $this->escape($user->real_name); ?></td>
                     <td<?php echo $borderTopNone ?>><?php
                         foreach ($orderPizzas as $orderPizza) {
                             if (! $orderPizza["ready"]) {
                                 continue;
                             }
                             foreach ($orderPizza["requests"] as $request) {
-                                if ($request["user_id"] == $userPrice["user"]->id) {
+                                if ($request["user_id"] == $user->id) {
                                     echo $request["pieces"], " × ", $this->escape($orderPizza["title"]), "<br />";
                                 }
                             }
                         }
                      ?></td>
-                    <td<?php echo $borderTopNone ?> class="price"><?php echo $this->escape(round($userPrice["totalPrice"] * $priceMultiplier, 0)); ?> руб.</td>
+                    <td<?php echo $borderTopNone ?> class="price">
+                        <?php echo $userCollectedMoney ? $userCollectedMoney . " из " : "" ?><?php echo $this->escape($userTotalPrice); ?> руб.
+                    </td>
                 </tr>
             <?php
                 $borderTopNone = "";
             } ?>
         </table>
+        <?php if ($canEdit) { ?>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("table.order-per-user-details td.username span").on("click", function() {
+                    var tr = $(this).closest("tr");
+                    var currentAmount = tr.data("collected-money") ? tr.data("collected-money") : tr.data("total-price");
+                    var input = prompt($(this).text() + " сдал(а):", currentAmount);
+                    if (input == "") {
+                        input = "0";
+                    }
+                    input = input.replace(',', '.');
+                    if (input !== null) {
+                        try {
+                            var amount = Math.floor(eval("0 + " + input));
+                        } catch (e) {
+                            alert("Недопустимое значение: \"" + input + "\"");
+                        }
+                        $.post('<?php echo $this->escape($this->url("collectMoney", [ "orderId" => $order->id ])) ?>', {
+                            userId : tr.data("user-id"),
+                            amount : amount
+                        }, function() {
+                            location.reload();
+                        });
+                    }
+                });
+            });
+        </script>
+        <?php } ?>
     <?php } ?>
 <?php } else { ?>
     <p>Заказ пустой.</p>
 <?php } ?>
 
-<div>Организатор этого заказа: <?php echo $this->escape($order->getCreator()->real_name); ?></div>
+<div>Организатор этого заказа: <?php echo $this->escape($orderCreator->real_name); ?></div>
 <?php if (!empty($orderPizzas) && ! $isActive) { ?>
     <p class="printButton"><button onclick="print()">Печать...</button></p>
 <?php } ?>

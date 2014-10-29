@@ -1,5 +1,7 @@
 ﻿p { margin: 1em 0; }
 
+.pointer { cursor: pointer; }
+
 .discountBanner { color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; display: inline-block; }
 .discountBanner p { margin: 0; }
 .discountBanner p.-title { font-size: 200%; font-weight: bold; }
@@ -72,6 +74,11 @@ body {
 
 table.order-per-user-details td.username { vertical-align: middle; }
 table.order-per-user-details td.price { vertical-align: middle; text-align: right; }
+table.order-per-user-details tr.paid-part { background-color: #cec; }
+table.order-per-user-details tr.paid-full { background-color: #cfc; }
+table.order-per-user-details tr .hover-show { visibility: hidden; margin: 0 0.5em; color: #ccc; }
+table.order-per-user-details tr:hover .hover-show { visibility: visible; }
+table.order-per-user-details tr .hover-show:hover { color: #999; }
 
 ul.orders-list li.active { color: #000; font-weight: bold; }
 ul.orders-list li.fixed { color: #c99;  }
