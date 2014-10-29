@@ -42,7 +42,7 @@ $this->headBlock()
         <div class="navbar-collapse collapse">
 <?php if (!empty($user)) { ?>
             <form class="navbar-form navbar-right" role="form" action="<?php echo $this->escape($this->url("logout")); ?>" method="POST">
-                <button type="submit" class="btn btn-primary">Выйти</button>
+                <button type="submit" class="btn btn-primary">Выйти <span class="glyphicon glyphicon-log-out"></span></button>
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#"><?php echo $this->escape($user->real_name) ?> (<?php echo $this->escape($user->email) ?>)</a></li>
