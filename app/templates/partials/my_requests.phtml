@@ -29,36 +29,43 @@
         /** @var \App\Models\RequestsRow $request */
 
         $orderPizza = $orderPizzas[$request->pizza_id];
+        $pizza = $request->getPizza();
         ?>
-        <div class="panel panel-<?php echo in_array($request->getPizza()->id, $readyPizzas) ? "success" : "danger" ?>">
+        <div class="panel panel-<?php echo in_array($request->pizza_id, $readyPizzas) ? "success" : "danger" ?>">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $request->getPizza()->id))); ?>">
-                        Пицца «<?php echo $this->escape($request->getPizza()->title) ?>»
+                    <a href="<?php echo $this->escape($this->url("addPizza", array("orderId" => $order->id, "pizzaId" => $request->pizza_id))); ?>">
+                        Пицца «<?php echo $this->escape($pizza->title) ?>»
                     </a>
                 </h3>
             </div>
             <div class="panel-body myRequest">
-                <img src="<?php echo $this->escape($request->getPizza()->image_url_small); ?>" alt="Фото" class="" />
-                <p class="readyOrNot"><?php echo in_array($request->getPizza()->id, $readyPizzas) ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " " . $this->plural((8 - $orderPizza["total_pieces"] % 8), "куска", "кусков", "кусков") ?></p>
+                <img src="<?php echo $this->escape($pizza->image_url_small); ?>" alt="Фото" class="" />
+                <p class="readyOrNot"><?php echo in_array($request->pizza_id, $readyPizzas) ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " " . $this->plural((8 - $orderPizza["total_pieces"] % 8), "куска", "кусков", "кусков") ?></p>
                 <form style="float: right" id="logout_form_<?php echo $request->id ?>" action="<?php echo $this->escape($this->url("deletePizza", array("orderId" => $order->id, "requestId" => $request->id))); ?>" method="POST">
                     <button type="submit" class="btn">Удалить</button>
                 </form>
                 <p>Вы заказали: <?php echo $this->escape($request->pieces); ?> <?php echo $this->plural($request->pieces, "кусок", "куска", "кусков"); ?><br />
                 Цена: <?php
-                $myPrice = $request->getPizza()->price / 8 * $request->pieces;
+                $myPrice = $pizza->price / 8 * $request->pieces;
                 $myTotalPrice += $myPrice;
-                if (in_array($request->getPizza()->id, $readyPizzas)) {
+                $isReady = in_array($request->pizza_id, $readyPizzas);
+                if ($isReady) {
                     $myTotalReadyPrice += $myPrice;
                 }
+
+                $priceFormulaPiece = round($pizza->price / 8, 2);
+                if ($hasDiscount && $priceMultiplier != 1) {
+                    $priceFormulaPiece = "(" . $priceFormulaPiece . " &minus; " . round((1 - $priceMultiplier) * $pizza->price / 8, 2) . ")";
+                }
+                $priceFormula = $request->pieces . " × " . $priceFormulaPiece . " = " . round($this->escape($myPrice * $priceMultiplier), 2);
+
                 ?>
-                <?php echo $request->pieces; ?> ×
-                <?php if ($hasDiscount) { ?>
-                    (<?php echo round($request->getPizza()->price / 8, 2); ?> &minus; <?php echo round((1 - $priceMultiplier) * $request->getPizza()->price / 8, 2); ?>)
-                <?php } else { ?>
-                    <?php echo round($request->getPizza()->price / 8, 2); ?>
+                <?php echo $priceFormula; ?> руб.
+                <?php if ($hasDiscount && ! $isReady) { ?>
+                    <em>(пока пицца не сформирована нельзя посчитать цену со скидкой)</em>
                 <?php } ?>
-                = <?php echo round($this->escape($myPrice * $priceMultiplier), 2); ?> руб.</p>
+                </p>
             </div>
         </div>
     <?php } ?>
