@@ -43,9 +43,9 @@ $btnClassByStatus = function($status) {
 <?php } ?>
 </h1>
 
-<div class="bg-info" style="padding: 1em 1em;">
+<p class="bg-info" style="padding: 1em 1em;">
     Доставка на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?>.
-</div>
+</p>
 
 <?php if ($order->note != "") { ?>
 <blockquote><?php echo $this->escape($order->note); ?></blockquote>

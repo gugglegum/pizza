@@ -1,8 +1,8 @@
-﻿p { margin: 1em 0; }
+﻿﻿p { margin: 1em 0; }
 
 .pointer { cursor: pointer; }
 
-.discountBanner { color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; display: inline-block; }
+.discountBanner { color: #933; border: 1px dashed #933; border-radius: 15px; padding: 10px; display: inline-block; margin: 1em 0; }
 .discountBanner p { margin: 0; }
 .discountBanner p.-title { font-size: 200%; font-weight: bold; }
 
@@ -16,12 +16,7 @@ table.commonOrder td.pieces { white-space: nowrap; }
 .commonOrderItem .pizzaInfo img { display: block; }
 .commonOrderItem .pizzaInfo .price { text-align: center; }
 .readyOrNot { font-size: 140%; margin-top: 0; }
-/*
-p.myTotalPrice { font-size: 120%; color: #633; }
-p.myTotalPrice .price { font-weight: bold; }
-
-p.totalOrderPrice { font-size: 120%; }
-p.totalOrderPrice .price { font-weight: bold; }*/
+form.createForm { margin-top: 2em; }
 
 body {
   padding-top: 70px;
