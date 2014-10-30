@@ -29,7 +29,15 @@ $orderClasses = [
     <?php foreach ($activeOrders as $order) {
         /** @var \App\Models\OrdersRow $order */
         ?>
-        <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+        <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>>
+            <div class="title"><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)
+                [<?php echo $this->escape($order->getCreator()->real_name); ?>]</div>
+        <?php if ($order->note != "") { ?>
+            <blockquote>
+                <div class="note"><?php echo $this->escape($order->note); ?></div>
+            </blockquote>
+        <?php } ?>
+        </li>
     <?php } ?>
 </ul>
 <?php } else { ?>
@@ -43,7 +51,9 @@ $orderClasses = [
     <?php foreach ($processingOrders as $order) {
         /** @var \App\Models\OrdersRow $order */
         ?>
-        <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+        <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)
+            [<?php echo $this->escape($order->getCreator()->real_name); ?>]
+        </li>
     <?php } ?>
 </ul>
 <?php } ?>
@@ -54,7 +64,9 @@ $orderClasses = [
 <?php foreach ($historyOrders as $order) {
     /** @var \App\Models\OrdersRow $order */
     ?>
-    <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y, H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)</li>
+    <li<?php if (!empty($orderClasses[$order->status])) { echo ' class="'.$orderClasses[$order->status].'"'; } ?>><a href="<?php echo $this->escape($this->url("order", [ "orderId" => $order->id ])); ?>">Заказ № <?php echo $order->id ?></a> с доставкой на <?php echo $this->escape(date("j M Y H:i", strtotime($order->delivery))); ?> (<?php echo $this->escape($order->getCurrentStatusText()) ?>)
+        [<?php echo $this->escape($order->getCreator()->real_name); ?>]
+    </li>
 <?php } ?>
 </ul>
 <?php } else { ?>

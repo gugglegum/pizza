@@ -75,11 +75,13 @@ table.order-per-user-details tr .hover-show { visibility: hidden; margin: 0 0.5e
 table.order-per-user-details tr:hover .hover-show { visibility: visible; }
 table.order-per-user-details tr .hover-show:hover { color: #999; }
 
-ul.orders-list li.active { color: #000; font-weight: bold; }
-ul.orders-list li.fixed { color: #c99;  }
-ul.orders-list li.ordered { color: #cc9;  }
-ul.orders-list li.delivered { color: #9c9;  }
-ul.orders-list li.cancelled { color: #999; text-decoration: line-through; }
+ul.orders-list li.active .title { color: #000; font-weight: bold; }
+ul.orders-list li.fixed .title { color: #c99;  }
+ul.orders-list li.ordered .title { color: #cc9;  }
+ul.orders-list li.delivered .title { color: #9c9;  }
+ul.orders-list li.cancelled .title { color: #999; text-decoration: line-through; }
+ul.orders-list li blockquote { font-size: 90%; }
+ul.orders-list li blockquote .note { font-style: italic; }
 
 .printButton { text-align: right; }
 
