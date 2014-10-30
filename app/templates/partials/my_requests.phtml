@@ -27,6 +27,8 @@
 
     <?php foreach ($myRequests as $request) {
         /** @var \App\Models\RequestsRow $request */
+
+        $orderPizza = $orderPizzas[$request->pizza_id];
         ?>
         <div class="panel panel-<?php echo in_array($request->getPizza()->id, $readyPizzas) ? "success" : "danger" ?>">
             <div class="panel-heading">
@@ -38,7 +40,7 @@
             </div>
             <div class="panel-body myRequest">
                 <img src="<?php echo $this->escape($request->getPizza()->image_url_small); ?>" alt="Фото" class="" />
-                <p class="readyOrNot"><?php echo in_array($request->getPizza()->id, $readyPizzas) ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizzas[$request->getPizza()->id]["total_pieces"] % 8) . " " . $this->plural((8 - $orderPizza["total_pieces"] % 8), "куска", "кусков", "кусков") ?></p>
+                <p class="readyOrNot"><?php echo in_array($request->getPizza()->id, $readyPizzas) ? "Готова к заказу" : "Не готова, не хватает " . (8 - $orderPizza["total_pieces"] % 8) . " " . $this->plural((8 - $orderPizza["total_pieces"] % 8), "куска", "кусков", "кусков") ?></p>
                 <form style="float: right" id="logout_form_<?php echo $request->id ?>" action="<?php echo $this->escape($this->url("deletePizza", array("orderId" => $order->id, "requestId" => $request->id))); ?>" method="POST">
                     <button type="submit" class="btn">Удалить</button>
                 </form>
