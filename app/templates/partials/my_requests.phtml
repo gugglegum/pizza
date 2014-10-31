@@ -62,9 +62,6 @@
 
                 ?>
                 <?php echo $priceFormula; ?> руб.
-                <?php if ($hasDiscount && ! $isReady) { ?>
-                    <em>(пока пицца не сформирована нельзя посчитать цену со скидкой)</em>
-                <?php } ?>
                 </p>
             </div>
         </div>
@@ -75,6 +72,11 @@
     <p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
         <?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
     </p>
+
+    <?php if ($order->status == \App\Models\OrdersRow::STATUS_ACTIVE && $order->discount_absolute != 0) { ?>
+        <p>Из-за фиксированной составляющей скидки конечная цена может меняться по мере формирования заказа.</p>
+    <?php } ?>
+
 <?php } else { ?>
     <p>У вас пока нет ни одной заявки на пиццу. <a href="<?php echo $this->escape($this->url("selectPizza", [ "orderId" => $order->id ])); ?>">Создать одну</a></p>
 <?php } ?>
