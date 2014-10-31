@@ -11,6 +11,8 @@
 /** @var array $orderPizzas */
 /** @var float $priceMultiplier */
 /** @var bool $hasDiscount */
+/** @var int|null $collectedMoney */
+/** @var \App\Models\UsersRow $orderCreator */
 
 ?>
 <h2>Мои заявки</h2>
@@ -72,11 +74,18 @@
         </div>
     <?php } ?>
 
+    <?php if ($order->status == \App\Models\OrdersRow::STATUS_ACTIVE) { ?>
     <p><a href="<?php echo $this->escape($this->url("selectPizza", [ "orderId" => $order->id ])); ?>">Добавить ещё заявку</a></p>
+    <?php } ?>
+
+    <?php
+    $needToPay = round(max(0, $myTotalReadyPrice * $priceMultiplier), 0);
+
+    ?>
 
     <?php if (count($myRequests) != 0) { ?>
     <p class="myTotalPrice">
-        Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
+        Вам нужно <?php if ($collectedMoney !== null) { ?>было <?php } ?>сдать: <span class="price"><?php echo $this->escape($needToPay); ?> руб.</span>
         <?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
 
         <?php if ($myReadyPizzasCount == 0) { ?>
@@ -93,14 +102,32 @@
         <?php } else { ?>
             На данный момент
             <?php if (count($myRequests) > 1) { ?>
-                все ваши пиццы собрались.
+                все ваши пиццы полностью собрались.
             <?php } else { ?>
-                ваша пицца успешно собралась.
+                ваша пицца полностью собралась.
             <?php } ?>
         <?php } ?>
-
     </p>
     <?php } ?>
+
+    <?php if ($collectedMoney !== null) { ?>
+        <p>Вы сдали: <span class="price"><?php echo $collectedMoney; ?> руб.</span>.
+        <?php if ($needToPay > $collectedMoney) { ?>
+            Вы сдали меньше, чем надо.
+        <?php } elseif ($needToPay == $collectedMoney) { ?>
+            <strong>Вы &mdash; молодец</strong>, вы сдали ровно столько, сколько надо.
+        <?php } else { ?>
+            Вы сдали (почему-то) больше, чем надо. <strong>Восхищаюсь вашим благородством</strong>.
+        <?php } ?>
+        </p>
+    <?php } elseif ($needToPay > 0 && in_array($order->status, [
+            \App\Models\OrdersRow::STATUS_FIXED,
+            \App\Models\OrdersRow::STATUS_ORDERED,
+            \App\Models\OrdersRow::STATUS_DELIVERED,
+        ])) { ?>
+        <p><strong>А ведь уже пора сдавать!</strong> Деньги собирает <?php echo $this->escape($orderCreator->real_name); ?>.</p>
+    <?php } ?>
+
 
     <?php if ($order->status == \App\Models\OrdersRow::STATUS_ACTIVE && $order->discount_absolute != 0) { ?>
         <p>Из-за фиксированной составляющей скидки конечная цена может меняться по мере формирования заказа.</p>

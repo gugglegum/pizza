@@ -107,6 +107,7 @@ class OrderController extends AbstractController
             "order" => $order,
             "orderPrice" => $orderPrice,
             "canEdit" => $this->_user && $order->creator == $this->_user->id,
+            "user" => $this->_user,
         ));
         $body = $this->_tpl->render("layouts/normal.phtml", array(
             "content" => $content,

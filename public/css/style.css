@@ -18,6 +18,8 @@ table.commonOrder td.pieces { white-space: nowrap; }
 .readyOrNot { font-size: 140%; margin-top: 0; }
 form.createForm { margin-top: 2em; }
 
+.price { font-weight: bold; color: #696; }
+
 body {
   padding-top: 70px;
   padding-bottom: 40px;
