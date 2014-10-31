@@ -23,6 +23,8 @@
     }
     $myTotalPrice = 0;
     $myTotalReadyPrice = 0;
+    $myReadyPizzasCount = 0;
+    $myUnreadyPizzasCount = 0;
     ?>
 
     <?php foreach ($myRequests as $request) {
@@ -52,6 +54,9 @@
                 $isReady = in_array($request->pizza_id, $readyPizzas);
                 if ($isReady) {
                     $myTotalReadyPrice += $myPrice;
+                    $myReadyPizzasCount++;
+                } else {
+                    $myUnreadyPizzasCount++;
                 }
 
                 $priceFormulaPiece = round($pizza->price / 8, 2);
@@ -69,9 +74,33 @@
 
     <p><a href="<?php echo $this->escape($this->url("selectPizza", [ "orderId" => $order->id ])); ?>">Добавить ещё заявку</a></p>
 
-    <p class="myTotalPrice">Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
+    <?php if (count($myRequests) != 0) { ?>
+    <p class="myTotalPrice">
+        Вам нужно сдать: <span class="price"><?php echo $this->escape(round(max(0, $myTotalReadyPrice * $priceMultiplier), 0)); ?> руб.</span>
         <?php if ($hasDiscount) { ?> (с учётом скидки)<?php } ?>
+
+        <?php if ($myReadyPizzasCount == 0) { ?>
+            На данный момент
+            <?php if (count($myRequests) > 1) { ?>
+                ни одна ваша пицца ещё не собралась.
+            <?php } else { ?>
+                ваша пицца ещё не собралась.
+            <?php } ?>
+            Попросите кого-нибудь присоединиться к вам или выберите другую пиццу.
+        <?php } elseif ($myUnreadyPizzasCount > 0) { ?>
+            На данный момент ещё не все пиццы из ваших заявок собрались.
+            Попросите кого-нибудь присоединиться к вам или выберите другую пиццу.
+        <?php } else { ?>
+            На данный момент
+            <?php if (count($myRequests) > 1) { ?>
+                все ваши пиццы собрались.
+            <?php } else { ?>
+                ваша пицца успешно собралась.
+            <?php } ?>
+        <?php } ?>
+
     </p>
+    <?php } ?>
 
     <?php if ($order->status == \App\Models\OrdersRow::STATUS_ACTIVE && $order->discount_absolute != 0) { ?>
         <p>Из-за фиксированной составляющей скидки конечная цена может меняться по мере формирования заказа.</p>
