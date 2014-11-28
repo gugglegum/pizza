@@ -141,7 +141,7 @@ class OrderController extends AbstractController
 
         /** @var $pizzasTable \App\Models\PizzasTable */
         $pizzasTable = $this->_tm->getTable("Pizzas");
-        $pizzasRowset = $pizzasTable->fetchAll($pizzasTable->select()->order('price ASC'));
+        $pizzasRowset = $pizzasTable->fetchAll($pizzasTable->select()->where('hidden = 0')->order('price ASC'));
 
         $content = $this->_tpl->render("select_pizza.phtml", array(
             'pizzas' => $pizzasRowset,
@@ -180,7 +180,7 @@ class OrderController extends AbstractController
 
         /** @var $pizzasTable \App\Models\PizzasTable */
         $pizzasTable = $this->_tm->getTable("Pizzas");
-        $pizzasRow = $pizzasTable->fetchRow($pizzasTable->select()->where("id = ?", $pizzaId));
+        $pizzasRow = $pizzasTable->fetchRow($pizzasTable->select()->where("id = ?", $pizzaId)->where('hidden = 0'));
         if (! $pizzasRow instanceof PizzasRow) {
             throw new \App\Http\NotFoundException("Pizza not found");
         }

@@ -18,6 +18,7 @@ namespace App\Models;
  * @property $image_url_medium string   Картинка пиццы (средняя)
  * @property $image_url_small string    Картинка пиццы (маленькая)
  * @property $price int
+ * @property $hidden int            Скрытая пицца (0/1)
  */
 class PizzasRow extends AbstractRow
 {
