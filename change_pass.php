@@ -46,7 +46,7 @@ function promptPassword($prompt = "Enter new password: ")
         $command = "/usr/bin/env bash -c 'echo OK'";
         if (rtrim(shell_exec($command)) !== 'OK') {
             trigger_error("Can't invoke bash");
-            return;
+            return '';
         }
         $command = "/usr/bin/env bash -c 'read -s -p \""
             . addslashes($prompt)
